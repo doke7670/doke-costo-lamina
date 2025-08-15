@@ -1,0 +1,4499 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cotización Viniles</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-negro text-white font-sans p-2 sm:p-4">
+  <div class="container mx-auto max-w-7xl bg-negro-claro rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-2xl">
+    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 text-center text-naranja">
+      <i class="fas fa-calculator text-naranja mr-2"></i>
+      <span class="hidden sm:inline">Calculadora de Viniles</span>
+      <span class="sm:hidden">Viniles</span>
+    </h1>
+
+    <!-- Sistema de Pestañas -->
+    <div class="mb-6">
+      <div class="flex bg-plomo-oscuro rounded-xl p-1">
+        <button id="tabCotizacion" onclick="switchTab('cotizacion')"
+          class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition tab-active">
+          <i class="fas fa-file-invoice mr-2"></i>Cotización
+        </button>
+        <button id="tabCalculadora" onclick="switchTab('calculadora')"
+          class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition tab-inactive">
+          <i class="fas fa-calculator-alt mr-2"></i>Calc Rápida
+        </button>
+        <button id="tabMateriales" onclick="switchTab('materiales')"
+          class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition tab-inactive">
+          <i class="fas fa-boxes mr-2"></i>Materiales
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenido de Pestaña Cotización -->
+    <div id="contentCotizacion" class="tab-content">
+      <!-- Información del Cliente -->
+      <div class="bg-plomo-oscuro rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-2">
+          <h3 class="text-base sm:text-lg font-semibold text-naranja">
+            <i class="fas fa-user text-naranja mr-2"></i>Datos del Cliente
+          </h3>
+          <span class="text-xs text-gray-400 bg-gray-600 px-2 py-1 rounded text-center sm:text-left">
+            <i class="fas fa-info-circle mr-1"></i>Opcional - Se usarán datos referenciales si está vacío
+          </span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <input type="text" id="clientName" placeholder="Nombre del cliente (opcional)"
+            class="rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja" />
+          <input type="tel" id="clientPhone" placeholder="Teléfono (opcional)"
+            class="rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja" />
+          <input type="email" id="clientEmail" placeholder="Email (opcional)"
+            class="rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja" />
+          <input type="text" id="clientRuc" placeholder="RUC (opcional)"
+            class="rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja" />
+        </div>
+      </div>
+
+      <!-- Modalidad de Venta -->
+      <div class="bg-plomo-oscuro rounded-xl p-3 sm:p-4 mb-4">
+        <h3 class="text-base sm:text-lg font-semibold text-naranja mb-3">
+          <i class="fas fa-store text-naranja mr-2"></i>Modalidad de Venta
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <label
+            class="flex items-center space-x-3 bg-negro-claro rounded-lg p-3 cursor-pointer hover:bg-gray-600 transition">
+            <input type="radio" name="modalidadVenta" value="solo_material" class="text-naranja focus:ring-naranja"
+              checked>
+            <div>
+              <div class="font-semibold text-white">
+                <i class="fas fa-tape text-blue-400 mr-2"></i>Solo Material
+              </div>
+              <div class="text-xs text-gray-400">Venta por metros lineales</div>
+            </div>
+          </label>
+
+          <label
+            class="flex items-center space-x-3 bg-negro-claro rounded-lg p-3 cursor-pointer hover:bg-gray-600 transition">
+            <input type="radio" name="modalidadVenta" value="trabajo_completo" class="text-naranja focus:ring-naranja">
+            <div>
+              <div class="font-semibold text-white">
+                <i class="fas fa-tools text-green-400 mr-2"></i>Trabajo Completo
+              </div>
+              <div class="text-xs text-gray-400">Material + instalación</div>
+            </div>
+          </label>
+
+          <label
+            class="flex items-center space-x-3 bg-negro-claro rounded-lg p-3 cursor-pointer hover:bg-gray-600 transition">
+            <input type="radio" name="modalidadVenta" value="mixto" class="text-naranja focus:ring-naranja">
+            <div>
+              <div class="font-semibold text-white">
+                <i class="fas fa-sliders-h text-yellow-400 mr-2"></i>Mixto
+              </div>
+              <div class="text-xs text-gray-400">Cliente elige qué incluir</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Indicador de Modalidad Activa -->
+      <div id="modalidadIndicador" class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 text-center">
+        <span class="text-blue-700 font-semibold">
+          <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+          <span id="modalidadTexto">Modalidad: Solo Material - Venta por metros</span>
+        </span>
+      </div>
+
+      <!-- Formulario de Productos Mejorado -->
+      <div class="bg-plomo-oscuro rounded-xl p-4 mb-6">
+        <h3 class="text-lg font-bold text-naranja mb-4">
+          <i class="fas fa-plus-circle mr-2"></i>Agregar Trabajo Personalizado
+        </h3>
+
+        <!-- Nombre del Trabajo (Prominente) -->
+        <div class="mb-4">
+          <label for="nombreTrabajo" class="block text-sm font-semibold mb-2">
+            <i class="fas fa-tag text-naranja mr-1"></i>Nombre del Trabajo:
+          </label>
+          <input type="text" id="nombreTrabajo"
+            placeholder="Ej: Polarizado Corolla 2020, Vinil capó Rav4, Cromado manijas..."
+            class="w-full rounded-xl px-4 py-3 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja text-lg font-medium"
+            autocomplete="off" />
+          <small class="text-gray-400 mt-1 block">Describe el trabajo específico que vas a realizar</small>
+        </div>
+
+        <form id="formulario" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div>
+            <label for="ancho" class="block text-sm font-semibold mb-1">
+              <i class="fas fa-arrows-alt-h text-blue-400"></i> Ancho (cm):
+            </label>
+            <input type="number" id="ancho" name="ancho" placeholder="150"
+              class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja" />
+          </div>
+          <div>
+            <label for="alto" class="block text-sm font-semibold mb-1">
+              <i class="fas fa-arrows-alt-v text-green-400"></i> Alto (cm):
+            </label>
+            <input type="number" id="alto" name="alto" placeholder="100"
+              class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja" />
+          </div>
+          <div>
+            <label for="cantidad" class="block text-sm font-semibold mb-1">
+              <i class="fas fa-hashtag text-yellow-400"></i> Cantidad:
+            </label>
+            <input type="number" id="cantidad" name="cantidad" placeholder="1" value="1" min="1"
+              class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja" />
+          </div>
+          <div>
+            <label for="opciones" class="block text-sm font-semibold mb-1">
+              <i class="fas fa-box text-naranja mr-1"></i>Material:
+            </label>
+            <select id="opciones" name="opciones"
+              class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+              <!-- Las opciones se cargan dinámicamente -->
+            </select>
+          </div>
+          <div>
+            <label for="tipoTrabajo" class="block text-sm font-semibold mb-1">Tipo de Trabajo:</label>
+            <select id="tipoTrabajo" name="tipoTrabajo" onchange="cambiarTipoTrabajo()"
+              class="w-full rounded-xl px-4 py-2 bg-plomo-oscuro text-white focus:outline-none focus:ring-2 ring-naranja">
+              <option value="plano">Superficie Plana (calcomanías, logos)</option>
+              <option value="forrado">Forrado Completo (techos, parachoques)</option>
+              <option value="parcial">Forrado Parcial (franjas, detalles)</option>
+            </select>
+          </div>
+          <div id="complejidadDiv">
+            <label for="complejidad" class="block text-sm font-semibold mb-1">Complejidad:</label>
+            <select id="complejidad" name="complejidad"
+              class="w-full rounded-xl px-4 py-2 bg-plomo-oscuro text-white focus:outline-none focus:ring-2 ring-naranja">
+              <option value="simple">Simple (formas básicas)</option>
+              <option value="medium">Medio (curvas suaves)</option>
+              <option value="complex">Complejo (muchas curvas)</option>
+              <option value="intricate">Muy complejo (relieves, esquinas)</option>
+            </select>
+          </div>
+          <!-- Campos específicos para forrado (ocultos por defecto) -->
+          <div id="forradoFields" style="display: none;" class="col-span-1 sm:col-span-2 lg:col-span-5">
+            <div
+              class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-blanco-suave rounded-xl border-2 border-naranja border-opacity-20">
+              <div>
+                <label for="tipoSuperficie" class="block text-sm font-semibold mb-1 text-gray-800">Superficie:</label>
+                <select id="tipoSuperficie" name="tipoSuperficie"
+                  class="w-full rounded-xl px-4 py-2 bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 ring-naranja">
+                  <option value="techo">Techo Completo</option>
+                  <option value="capo">Capó</option>
+                  <option value="parachoques">Parachoques</option>
+                  <option value="puerta">Puerta</option>
+                  <option value="lateral">Lateral Completo</option>
+                  <option value="spoiler">Spoiler</option>
+                  <option value="espejo">Espejos</option>
+                  <option value="personalizado">Personalizado</option>
+                </select>
+              </div>
+              <div>
+                <label for="factorDificultad" class="block text-sm font-semibold mb-1 text-gray-800">Dificultad:</label>
+                <select id="factorDificultad" name="factorDificultad"
+                  class="w-full rounded-xl px-4 py-2 bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 ring-naranja">
+                  <option value="1.2">Fácil (+20%)</option>
+                  <option value="1.5">Medio (+50%)</option>
+                  <option value="2.0">Difícil (+100%)</option>
+                  <option value="2.5">Muy Difícil (+150%)</option>
+                </select>
+              </div>
+              <div>
+                <label for="tiempoEstimado" class="block text-sm font-semibold mb-1 text-gray-800">Tiempo
+                  (horas):</label>
+                <input type="number" id="tiempoEstimado" name="tiempoEstimado" placeholder="2" min="0.5" step="0.5"
+                  class="w-full rounded-xl px-4 py-2 bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 ring-naranja" />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label for="descuento" class="block text-sm font-semibold mb-1">
+              <i class="fas fa-percentage text-green-400"></i> Desc. (%):
+            </label>
+            <input type="number" id="descuento" name="descuento" placeholder="0" min="0" max="50"
+              class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja" />
+          </div>
+        </form>
+
+        <!-- Selector de Complejidad del Trabajo (solo para trabajo completo/mixto) -->
+        <div id="complejidadSection" class="mt-4 p-4 bg-negro-claro rounded-xl" style="display: none;">
+          <label class="block text-sm font-semibold mb-3">
+            <i class="fas fa-cogs text-naranja mr-1"></i>Complejidad del Trabajo:
+          </label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <label
+              class="flex items-center space-x-2 bg-plomo-oscuro rounded-lg p-3 cursor-pointer hover:bg-gray-600 transition">
+              <input type="radio" name="complejidadTrabajo" value="simple" class="text-naranja focus:ring-naranja"
+                checked>
+              <div>
+                <div class="font-medium text-white">Simple</div>
+                <div class="text-xs text-gray-300">S/15/m²</div>
+              </div>
+            </label>
+            <label
+              class="flex items-center space-x-2 bg-plomo-oscuro rounded-lg p-3 cursor-pointer hover:bg-gray-600 transition">
+              <input type="radio" name="complejidadTrabajo" value="complejo" class="text-naranja focus:ring-naranja">
+              <div>
+                <div class="font-medium text-white">Complejo</div>
+                <div class="text-xs text-gray-300">S/25/m²</div>
+              </div>
+            </label>
+            <label
+              class="flex items-center space-x-2 bg-plomo-oscuro rounded-lg p-3 cursor-pointer hover:bg-gray-600 transition">
+              <input type="radio" name="complejidadTrabajo" value="premium" class="text-naranja focus:ring-naranja">
+              <div>
+                <div class="font-medium text-white">Premium</div>
+                <div class="text-xs text-gray-300">S/40/m²</div>
+              </div>
+            </label>
+            <label
+              class="flex items-center space-x-2 bg-plomo-oscuro rounded-lg p-3 cursor-pointer hover:bg-gray-600 transition">
+              <input type="radio" name="complejidadTrabajo" value="forrado" class="text-naranja focus:ring-naranja">
+              <div>
+                <div class="font-medium text-white">Forrado</div>
+                <div class="text-xs text-gray-300">S/60/m²</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Cálculo en Tiempo Real -->
+        <div id="calculoTiempoReal" class="mt-4 p-4 bg-gradient-to-r from-green-600 to-green-700 rounded-xl text-white"
+          style="display: none;">
+          <h4 class="font-bold mb-2">
+            <i class="fas fa-calculator mr-2"></i>Cálculo Automático:
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+            <div>
+              <div class="text-green-100">Costo Material:</div>
+              <div id="costoMaterial" class="font-bold text-lg">S/ 0.00</div>
+            </div>
+            <div>
+              <div class="text-green-100">Mano de Obra:</div>
+              <div id="costoManoObra" class="font-bold text-lg">S/ 0.00</div>
+            </div>
+            <div>
+              <div class="text-green-100">Ganancia:</div>
+              <div id="ganancia" class="font-bold text-lg">S/ 0.00</div>
+            </div>
+            <div>
+              <div class="text-green-100">Total:</div>
+              <div id="totalCalculado" class="font-bold text-xl text-yellow-200">S/ 0.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 space-y-2">
+          <button type="button" onclick="agregarTrabajoPersonalizado()" id="agregar"
+            class="w-full bg-naranja hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-xl transition text-lg shadow-lg">
+            <i class="fas fa-plus-circle mr-2"></i>Agregar Trabajo
+          </button>
+
+          <!-- Botones de acceso rápido para forrado -->
+          <div id="botonesRapidos" style="display: none;" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button type="button" onclick="forradoRapido('techo')"
+              class="bg-plomo hover:bg-plomo-claro text-white text-xs py-1 px-2 rounded">
+              <i class="fas fa-car"></i> Techo
+            </button>
+            <button type="button" onclick="forradoRapido('capo')"
+              class="bg-plomo hover:bg-plomo-claro text-white text-xs py-1 px-2 rounded">
+              <i class="fas fa-car-side"></i> Capó
+            </button>
+            <button type="button" onclick="forradoRapido('parachoques')"
+              class="bg-plomo hover:bg-plomo-claro text-white text-xs py-1 px-2 rounded">
+              <i class="fas fa-shield-alt"></i> Parachoques
+            </button>
+            <button type="button" onclick="forradoRapido('lateral')"
+              class="bg-plomo hover:bg-plomo-claro text-white text-xs py-1 px-2 rounded">
+              <i class="fas fa-truck-side"></i> Lateral
+            </button>
+          </div>
+        </div>
+        </form>
+      </div>
+
+      <!-- Tabla de Productos Responsive -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table id="miTabla" class="min-w-full">
+            <thead class="bg-gradient-to-r from-plomo to-plomo-claro">
+              <tr>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-left text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  #</th>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-left text-xs font-bold text-white uppercase tracking-wider min-w-[200px]">
+                  <i class="fas fa-box text-naranja mr-1"></i>Material
+                </th>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-center text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  <i class="fas fa-expand-arrows-alt text-naranja mr-1"></i>Dim.
+                </th>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-center text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  <i class="fas fa-hashtag text-naranja mr-1"></i>Cant.
+                </th>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-center text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  <i class="fas fa-clock text-naranja mr-1"></i>Inicio
+                  <br><small class="text-gray-300 normal-case">hora</small>
+                </th>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-center text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  <i class="fas fa-stopwatch text-naranja mr-1"></i>Duración
+                  <br><small class="text-gray-300 normal-case">tiempo</small>
+                </th>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-center text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  <i class="fas fa-play text-naranja mr-1"></i>Estado
+                  <br><small class="text-gray-300 normal-case">control</small>
+                </th>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-center text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  <i class="fas fa-ruler text-naranja mr-1"></i>Metros
+                </th>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-right text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  <i class="fas fa-dollar-sign text-naranja mr-1"></i>P. Unit.
+                </th>
+                <th id="costRealHeader"
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-right text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap"
+                  style="display: none;">
+                  <i class="fas fa-eye text-naranja mr-1"></i>Costo Material
+                  <br><small class="text-gray-300 normal-case hidden xl:block">solo material</small>
+                </th>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-center text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  <i class="fas fa-percentage text-naranja mr-1"></i>Desc.
+                </th>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-right text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  <i class="fas fa-calculator text-naranja mr-1"></i>Subtotal
+                </th>
+                <th
+                  class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 lg:py-4 text-center text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+                  <i class="fas fa-cog text-naranja mr-1"></i>Acción
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200" id="tableBody">
+              <!-- Mensaje cuando no hay productos -->
+              <tr id="emptyMessage" class="table-empty-row">
+                <td colspan="13" class="px-6 py-12 text-center text-gray-500">
+                  <div class="flex flex-col items-center">
+                    <svg class="w-12 h-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                      </path>
+                    </svg>
+                    <p class="text-lg font-medium">No hay productos agregados</p>
+                    <p class="text-sm">Agregue productos usando el formulario de arriba</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Indicador de scroll para mobile -->
+        <div class="sm:hidden bg-gray-100 px-4 py-2 text-center">
+          <small class="text-gray-600">
+            <i class="fas fa-arrows-alt-h text-naranja mr-1"></i>
+            Desliza horizontalmente para ver más columnas
+          </small>
+        </div>
+      </div>
+
+      <!-- Sección eliminada: Botones rápidos no necesarios -->
+
+      <!-- Resumen de Totales -->
+      <div class="mt-4 sm:mt-6 bg-plomo-oscuro rounded-xl p-3 sm:p-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          <!-- Totales -->
+          <div class="space-y-2 order-2 lg:order-1">
+            <div class="flex justify-between">
+              <span>Subtotal:</span>
+              <span id="subtotal" class="font-semibold">S/ 0.00</span>
+            </div>
+            <div id="costBreakdown" class="text-xs text-gray-400 space-y-1" style="display: none;">
+              <div class="flex justify-between">
+                <span><i class="fas fa-box text-blue-400 mr-1"></i>├─ Costo real materiales:</span>
+                <span id="materialCosts" class="text-red-400">S/ 0.00</span>
+              </div>
+              <div class="flex justify-between">
+                <span><i class="fas fa-chart-line text-green-400"></i> └─ Ganancia materiales:</span>
+                <span id="estimatedProfit" class="text-green-400">S/ 0.00</span>
+              </div>
+            </div>
+            <!-- Mano de obra ya incluida en cada producto -->
+            <div class="flex justify-between">
+              <span>Descuento:</span>
+              <span id="totalDiscount" class="font-semibold text-green-400">-S/ 0.00</span>
+            </div>
+            <div class="flex justify-between">
+              <span>IGV (18%):</span>
+              <span id="igv" class="font-semibold">S/ 0.00</span>
+            </div>
+            <hr class="border-plomo">
+            <div
+              class="flex justify-between text-lg sm:text-xl font-bold text-naranja bg-negro-claro rounded-lg p-2 sm:p-3">
+              <span><i class="fas fa-calculator text-naranja mr-2"></i>TOTAL:</span>
+              <span id="total">S/ 0.00</span>
+            </div>
+          </div>
+
+          <!-- Opciones -->
+          <div class="space-y-3 order-1 lg:order-2">
+            <div>
+              <label class="block text-sm font-semibold mb-1"><i class="fas fa-tools text-naranja"></i> Mano de Obra
+                (Precios Perú 2025):</label>
+              <select id="laborType"
+                class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+                <option value="none"><i class="fas fa-ban"></i> Sin instalación</option>
+                <option value="standard"><i class="fas fa-clipboard-list"></i> Básica - S/ 15/m² (letras, logos simples)
+                </option>
+                <option value="complex"><i class="fas fa-palette"></i> Compleja - S/ 25/m² (diseños detallados)</option>
+                <option value="premium"><i class="fas fa-star"></i> Premium - S/ 40/m² (trabajo especializado)</option>
+                <option value="vehicle_full"><i class="fas fa-car"></i> Vehículo completo - S/ 60/m²</option>
+                <option value="architectural"><i class="fas fa-building"></i> Arquitectónica - S/ 35/m² (vidrieras)
+                </option>
+                <option value="weeding"><i class="fas fa-cut"></i> Solo desmalezado - S/ 12/m²</option>
+              </select>
+              <small class="text-gray-400 block mt-1"><i class="fas fa-lightbulb text-yellow-400"></i> Mínimo de
+                cobranza: S/ 30 (estándar en Lima)</small>
+            </div>
+            <div class="lg:hidden">
+              <small class="text-gray-400 block mt-1"><i class="fas fa-lightbulb text-yellow-400"></i> Mínimo de
+                cobranza: S/ 30 (estándar en Lima)</small>
+              <div class="grid grid-cols-1 gap-1 mt-2">
+                <button onclick="testCalculation()"
+                  class="w-full bg-purple-500 hover:bg-purple-600 text-white text-xs py-2 px-2 rounded">
+                  <i class="fas fa-calculator mr-1"></i>TEST: Fibra Carbono 150×100
+                </button>
+                <button onclick="testAllModes()"
+                  class="w-full bg-indigo-500 hover:bg-indigo-600 text-white text-xs py-2 px-2 rounded">
+                  <i class="fas fa-cogs mr-1"></i>TEST: Todas las Modalidades
+                </button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1">Incluir IGV:</label>
+              <input type="checkbox" id="includeIGV" checked class="rounded">
+              <span class="ml-2 text-sm">Incluir IGV (18%)</span>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1"><i class="fas fa-eye text-naranja"></i> Mostrar
+                Costos:</label>
+              <input type="checkbox" id="showRealCosts" class="rounded" onchange="toggleCostDisplay()">
+              <span class="ml-2 text-sm"><i class="fas fa-lightbulb text-yellow-400"></i> Mostrar costos reales</span>
+              <br><small class="text-gray-400 ml-6">Recomendado para: clientes corporativos, competencia, justificar
+                precios</small>
+            </div>
+
+            <!-- Configuración de Empresa para Ticket -->
+            <div class="hidden" id="companyConfig">
+              <label class="block text-sm font-semibold mb-1"><i class="fas fa-building text-naranja"></i> Datos
+                Empresa:</label>
+              <input type="text" id="companyName" placeholder="Nombre de tu empresa" value="VINILES & DISEÑOS SAC"
+                class="w-full rounded-lg px-3 py-1 bg-negro-claro text-white text-xs mb-1 focus:outline-none focus:ring-1 ring-naranja">
+              <input type="text" id="companyRuc" placeholder="RUC" value="20123456789"
+                class="w-full rounded-lg px-3 py-1 bg-negro-claro text-white text-xs mb-1 focus:outline-none focus:ring-1 ring-naranja">
+              <input type="text" id="companyAddress" placeholder="Dirección" value="AV. AREQUIPA 1234 - LIMA"
+                class="w-full rounded-lg px-3 py-1 bg-negro-claro text-white text-xs focus:outline-none focus:ring-1 ring-naranja">
+            </div>
+            <button onclick="generateQuote()"
+              class="w-full bg-naranja hover:bg-orange-600 text-white font-semibold py-2 sm:py-3 px-4 rounded-xl transition">
+              <i class="fas fa-file-invoice text-white mr-2"></i>
+              <span class="hidden sm:inline">Generar Cotización</span>
+              <span class="sm:hidden">Cotizar</span>
+            </button>
+
+            <!-- Botón de Generar Ticket (solo visible cuando todos los trabajos están completados) -->
+            <button id="generateTicketBtn" onclick="showTicketOptions()"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 sm:py-3 px-4 rounded-xl transition"
+              style="display: none;">
+              <i class="fas fa-receipt text-white mr-2"></i>
+              <span class="hidden sm:inline">🎫 Generar Ticket</span>
+              <span class="sm:hidden">Ticket</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="mt-4 sm:mt-6 grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 sm:justify-center">
+        <button onclick="clearAll()"
+          class="bg-plomo hover:bg-plomo-claro text-white px-3 sm:px-4 py-2 rounded-xl transition text-sm sm:text-base">
+          <i class="fas fa-broom"></i>
+          <span class="hidden sm:inline">Limpiar Todo</span>
+          <span class="sm:hidden">Limpiar</span>
+        </button>
+        <button onclick="saveQuote()"
+          class="bg-naranja hover:bg-orange-600 text-white px-3 sm:px-4 py-2 rounded-xl transition text-sm sm:text-base">
+          <i class="fas fa-save"></i>
+          <span class="hidden sm:inline">Guardar Cotización</span>
+          <span class="sm:hidden">Guardar</span>
+        </button>
+        <button onclick="loadQuotes()"
+          class="bg-plomo hover:bg-plomo-claro text-white px-3 sm:px-4 py-2 rounded-xl transition text-sm sm:text-base">
+          <i class="fas fa-list"></i>
+          <span class="hidden sm:inline">Ver Cotizaciones</span>
+          <span class="sm:hidden">Ver</span>
+        </button>
+        <button onclick="exportToPDF()"
+          class="bg-plomo-oscuro hover:bg-plomo text-white px-3 sm:px-4 py-2 rounded-xl transition text-sm sm:text-base">
+          <i class="fas fa-file-pdf"></i>
+          <span class="hidden sm:inline">Exportar PDF</span>
+          <span class="sm:hidden">PDF</span>
+        </button>
+      </div>
+
+      <!-- Botón flotante para cinta reflectiva -->
+      <div class="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50">
+        <button onclick="document.getElementById('modalCalculadora').classList.remove('hidden')"
+          class="bg-naranja hover:bg-orange-600 text-white px-3 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl transition font-semibold text-sm sm:text-base">
+          <i class="fas fa-tape text-white mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">Cinta Reflectiva</span>
+          <span class="sm:hidden">Cinta</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal flotante -->
+    <div id="modalCalculadora"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden px-3 sm:px-4 py-4 sm:py-8">
+      <div
+        class="bg-white rounded-xl sm:rounded-2xl shadow-xl w-full max-w-sm sm:max-w-md p-4 sm:p-6 relative text-gray-800 mx-2">
+        <!-- Botón de cerrar -->
+        <button onclick="document.getElementById('modalCalculadora').classList.add('hidden')"
+          class="absolute top-2 right-2 text-plomo hover:text-naranja text-xl sm:text-2xl font-bold">
+          <i class="fas fa-times"></i>
+        </button>
+
+        <h2 class="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6 text-naranja">
+          <i class="fas fa-tape text-naranja mr-2"></i>Cinta Reflectiva
+        </h2>
+
+        <label for="rectangulos" class="block font-medium mb-2 text-sm sm:text-base">
+          <i class="fas fa-hashtag text-blue-500 mr-2"></i>Cantidad de rectángulos (15 cm):
+        </label>
+        <input id="rectangulos" type="number" min="1" placeholder="Ej: 10"
+          class="w-full p-2 sm:p-3 text-sm sm:text-base border border-plomo rounded-lg sm:rounded-xl mb-4 focus:outline-none focus:ring-2 ring-naranja" />
+
+        <button onclick="calcular()"
+          class="w-full bg-naranja hover:bg-orange-600 text-white font-bold py-2 sm:py-3 rounded-lg sm:rounded-xl transition text-sm sm:text-base">
+          <i class="fas fa-calculator text-white mr-2"></i>Calcular
+        </button>
+
+        <div id="resultado" class="mt-6 text-plomo-oscuro hidden">
+          <p><strong>Precio total:</strong> <span id="precio"></span> soles</p>
+          <p><strong>Metros necesarios:</strong> <span id="metros"></span> m</p>
+          <p><strong>Precio por rectángulo:</strong> 2.25 soles</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para ver cotizaciones -->
+    <div id="modalCotizaciones"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden px-4 py-8">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-6 relative text-gray-800 max-h-96 overflow-y-auto">
+        <button onclick="document.getElementById('modalCotizaciones').classList.add('hidden')"
+          class="absolute top-2 right-2 text-plomo hover:text-naranja text-2xl font-bold">
+          &times;
+        </button>
+
+        <h2 class="text-2xl font-bold text-center mb-6 text-naranja">Cotizaciones Guardadas</h2>
+
+        <div id="cotizacionesList" class="space-y-3">
+          <!-- Las cotizaciones se cargarán aquí dinámicamente -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Generar Ticket -->
+    <div id="modalTicket"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden px-4 py-8">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6 relative text-gray-800">
+        <button onclick="closeTicketModal()"
+          class="absolute top-2 right-2 text-plomo hover:text-naranja text-2xl font-bold">
+          &times;
+        </button>
+
+        <h2 class="text-2xl font-bold text-center mb-6 text-naranja">
+          <i class="fas fa-receipt mr-2"></i>Generar Ticket de Trabajo
+        </h2>
+
+        <!-- Resumen del trabajo mejorado -->
+        <div id="ticketSummary" class="bg-gradient-to-r from-naranja to-orange-600 rounded-xl p-6 mb-6 text-white">
+          <h3 class="font-bold text-lg mb-3">
+            <i class="fas fa-clipboard-check mr-2"></i>Trabajo Completado
+          </h3>
+          <div id="ticketWorkSummary" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+            <!-- Se llenará dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Opciones de envío simplificadas -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <button onclick="generateTicket('whatsapp')"
+            class="ticket-option bg-green-500 hover:bg-green-600 text-white p-6 rounded-xl transition shadow-lg">
+            <i class="fab fa-whatsapp text-3xl mb-3"></i>
+            <div class="font-bold text-lg">WhatsApp</div>
+            <div class="text-sm opacity-90">Envío directo al cliente</div>
+          </button>
+
+          <button onclick="generateTicket('download')"
+            class="ticket-option bg-blue-500 hover:bg-blue-600 text-white p-6 rounded-xl transition shadow-lg">
+            <i class="fas fa-download text-3xl mb-3"></i>
+            <div class="font-bold text-lg">Descargar</div>
+            <div class="text-sm opacity-90">Guardar en el dispositivo</div>
+          </button>
+
+          <button onclick="generateTicket('copy')"
+            class="ticket-option bg-gray-600 hover:bg-gray-700 text-white p-6 rounded-xl transition shadow-lg">
+            <i class="fas fa-copy text-3xl mb-3"></i>
+            <div class="font-bold text-lg">Copiar</div>
+            <div class="text-sm opacity-90">Al portapapeles</div>
+          </button>
+        </div>
+
+        <!-- Vista previa del ticket -->
+        <div class="text-center mt-4">
+          <button onclick="showTicketPreview()" class="text-naranja hover:text-orange-600 text-sm font-medium">
+            <i class="fas fa-eye mr-1"></i>Ver vista previa de la boleta
+          </button>
+        </div>
+
+        <!-- Mensaje de confianza -->
+        <div class="text-center text-gray-600 mt-4">
+          <p class="text-sm">
+            <i class="fas fa-shield-alt text-green-500 mr-1"></i>
+            Boleta electrónica con formato oficial SUNAT
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Vista Previa del Ticket -->
+    <div id="modalTicketPreview"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden px-4 py-8">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative text-gray-800">
+        <button onclick="closeTicketPreview()"
+          class="absolute top-2 right-2 text-plomo hover:text-naranja text-2xl font-bold">
+          &times;
+        </button>
+
+        <h3 class="text-lg font-bold text-center mb-4 text-naranja">
+          <i class="fas fa-receipt mr-2"></i>Vista Previa - Ticket Térmico
+        </h3>
+
+        <div class="flex justify-center mb-4">
+          <div id="ticketPreviewContent" class="relative">
+            <!-- Se generará dinámicamente con estilos CSS aplicados -->
+          </div>
+        </div>
+
+        <div class="mt-4 text-center">
+          <button onclick="closeTicketPreview()" class="bg-naranja hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
+            <i class="fas fa-times mr-1"></i>Cerrar Vista Previa
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Trabajo Personalizado -->
+    <div id="modalCustomWork"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden px-4 py-8">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative text-gray-800">
+        <button onclick="closeCustomWorkModal()"
+          class="absolute top-2 right-2 text-plomo hover:text-naranja text-2xl font-bold">
+          &times;
+        </button>
+
+        <h3 class="text-xl font-bold text-center mb-6 text-naranja">
+          <i class="fas fa-plus-circle mr-2"></i>Trabajo Personalizado
+        </h3>
+
+        <form id="customWorkForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold mb-2 text-gray-700">
+              <i class="fas fa-tag text-naranja mr-1"></i>Nombre del Trabajo:
+            </label>
+            <input type="text" id="customWorkName" placeholder="Ej: Molduras puertas, Calcomanías logo..."
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-naranja focus:border-transparent"
+              required>
+            <small class="text-gray-500 mt-1 block">Describe el trabajo que vas a realizar</small>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-semibold mb-2 text-gray-700">
+                <i class="fas fa-arrows-alt-h text-naranja mr-1"></i>Ancho (cm):
+              </label>
+              <input type="number" id="customWorkWidth" placeholder="100" min="1"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-naranja">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2 text-gray-700">
+                <i class="fas fa-arrows-alt-v text-naranja mr-1"></i>Alto (cm):
+              </label>
+              <input type="number" id="customWorkHeight" placeholder="50" min="1"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-naranja">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-semibold mb-2 text-gray-700">
+                <i class="fas fa-hashtag text-naranja mr-1"></i>Cantidad:
+              </label>
+              <input type="number" id="customWorkQuantity" value="1" min="1"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-naranja">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2 text-gray-700">
+                <i class="fas fa-percentage text-naranja mr-1"></i>Descuento (%):
+              </label>
+              <input type="number" id="customWorkDiscount" placeholder="0" min="0" max="100"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-naranja">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2 text-gray-700">
+              <i class="fas fa-dollar-sign text-naranja mr-1"></i>Precio:
+            </label>
+            <div class="flex gap-2">
+              <input type="number" id="customWorkPrice" placeholder="50.00" step="0.01" min="0"
+                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-naranja">
+              <button type="button" onclick="calculateCustomPrice()"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm transition">
+                <i class="fas fa-calculator"></i> Auto
+              </button>
+            </div>
+            <small class="text-gray-500 mt-1 block">Precio manual o clic en "Auto" para calcular automáticamente</small>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2 text-gray-700">
+              <i class="fas fa-cogs text-naranja mr-1"></i>Tipo de Trabajo:
+            </label>
+            <select id="customWorkType"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-naranja">
+              <option value="plano">📏 Aplicación plana</option>
+              <option value="parcial">📐 Aplicación parcial</option>
+              <option value="forrado">🚗 Forrado completo</option>
+            </select>
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button type="button" onclick="closeCustomWorkModal()"
+              class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition">
+              <i class="fas fa-times mr-2"></i>Cancelar
+            </button>
+            <button type="submit"
+              class="flex-1 bg-naranja hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition">
+              <i class="fas fa-plus mr-2"></i>Agregar Trabajo
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Contenido de Pestaña Calculadora Rápida -->
+    <div id="contentCalculadora" class="tab-content" style="display: none;">
+      <div class="bg-plomo-oscuro rounded-xl p-4 mb-6">
+        <h3 class="text-lg font-bold text-naranja mb-4">
+          <i class="fas fa-tachometer-alt mr-2"></i>Calculadora Rápida de Costos
+        </h3>
+        <p class="text-gray-300 text-sm mb-4">Consulta rápida de costos de materiales sin generar cotización</p>
+
+        <!-- Formulario Rápido -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-semibold mb-2">
+              <i class="fas fa-box text-naranja mr-1"></i>Material:
+            </label>
+            <select id="rapidMaterial"
+              class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+              <!-- Se llenará dinámicamente -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-2">
+              <i class="fas fa-arrows-alt-h text-blue-400 mr-1"></i>Ancho (cm):
+            </label>
+            <input type="number" id="rapidWidth" placeholder="150"
+              class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-2">
+              <i class="fas fa-arrows-alt-v text-green-400 mr-1"></i>Alto (cm):
+            </label>
+            <input type="number" id="rapidHeight" placeholder="100"
+              class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+          </div>
+          <div class="flex items-end">
+            <button onclick="addRapidCalculation()"
+              class="w-full bg-naranja hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-xl transition">
+              <i class="fas fa-plus mr-2"></i>Agregar
+            </button>
+          </div>
+        </div>
+
+        <!-- Cálculo Instantáneo -->
+        <div id="rapidResult" class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-4 text-white mb-4"
+          style="display: none;">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+            <div>
+              <div class="text-blue-100">Costo Material:</div>
+              <div id="rapidCost" class="font-bold text-lg">S/ 0.00</div>
+            </div>
+            <div>
+              <div class="text-blue-100">Metros Usados:</div>
+              <div id="rapidMeters" class="font-bold text-lg">0.0m</div>
+            </div>
+            <div>
+              <div class="text-blue-100">Área Total:</div>
+              <div id="rapidArea" class="font-bold text-lg">0.0 m²</div>
+            </div>
+            <div>
+              <div class="text-blue-100">Precio Sugerido:</div>
+              <div id="rapidSuggested" class="font-bold text-xl text-yellow-200">S/ 0.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de Consultas -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+        <div class="bg-gradient-to-r from-plomo to-plomo-claro p-4">
+          <h4 class="text-white font-bold">
+            <i class="fas fa-table mr-2"></i>Consultas Realizadas
+          </h4>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table id="rapidTable" class="min-w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">#</th>
+                <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">Material</th>
+                <th class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase">Dimensiones</th>
+                <th class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase">Metros</th>
+                <th class="px-4 py-3 text-right text-xs font-bold text-gray-700 uppercase">Costo</th>
+                <th class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="rapidTableBody" class="bg-white divide-y divide-gray-200">
+              <tr id="rapidEmptyMessage">
+                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                  <div class="flex flex-col items-center">
+                    <i class="fas fa-search text-gray-300 text-4xl mb-4"></i>
+                    <p class="text-lg font-medium">No hay consultas realizadas</p>
+                    <p class="text-sm">Agrega materiales usando el formulario de arriba</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Resumen de Totales Rápidos -->
+      <div class="bg-plomo-oscuro rounded-xl p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
+          <div class="bg-negro-claro rounded-lg p-3">
+            <div class="text-gray-400 text-sm">Total Consultas</div>
+            <div id="rapidTotalItems" class="text-white font-bold text-xl">0</div>
+          </div>
+          <div class="bg-negro-claro rounded-lg p-3">
+            <div class="text-gray-400 text-sm">Total Metros</div>
+            <div id="rapidTotalMeters" class="text-blue-400 font-bold text-xl">0.0m</div>
+          </div>
+          <div class="bg-negro-claro rounded-lg p-3">
+            <div class="text-gray-400 text-sm">Total Costos</div>
+            <div id="rapidTotalCost" class="text-red-400 font-bold text-xl">S/ 0.00</div>
+          </div>
+          <div class="bg-negro-claro rounded-lg p-3">
+            <div class="text-gray-400 text-sm">Precio Sugerido</div>
+            <div id="rapidTotalSuggested" class="text-green-400 font-bold text-xl">S/ 0.00</div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-4">
+          <button onclick="clearRapidTable()"
+            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition">
+            <i class="fas fa-trash mr-2"></i>Limpiar Todo
+          </button>
+          <button onclick="exportToQuote()"
+            class="flex-1 bg-naranja hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition">
+            <i class="fas fa-file-export mr-2"></i>Exportar a Cotización
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido de Pestaña Gestión de Materiales -->
+    <div id="contentMateriales" class="tab-content" style="display: none;">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Formulario para Agregar/Editar Material -->
+        <div class="bg-plomo-oscuro rounded-xl p-4">
+          <h3 class="text-lg font-bold text-naranja mb-4">
+            <i class="fas fa-plus-circle mr-2"></i>Agregar Nuevo Material
+          </h3>
+
+          <form id="materialForm" class="space-y-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">
+                <i class="fas fa-tag text-naranja mr-1"></i>Nombre del Material:
+              </label>
+              <input type="text" id="materialName" placeholder="Ej: Vinil Premium Importado"
+                class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja"
+                required>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold mb-2">
+                  <i class="fas fa-dollar-sign text-green-400 mr-1"></i>Costo Real (S/):
+                </label>
+                <input type="number" id="materialCost" placeholder="150.00" step="0.01" min="0"
+                  class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja"
+                  required>
+                <small class="text-gray-400">Lo que te cuesta el rollo</small>
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-2">
+                  <i class="fas fa-percentage text-yellow-400 mr-1"></i>Ganancia (%):
+                </label>
+                <input type="number" id="materialMargin" placeholder="50" min="0" max="200"
+                  class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja"
+                  required>
+                <small class="text-gray-400">Porcentaje de ganancia</small>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold mb-2">
+                  <i class="fas fa-arrows-alt-h text-blue-400 mr-1"></i>Ancho (cm):
+                </label>
+                <input type="number" id="materialWidth" placeholder="150" min="1"
+                  class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja"
+                  required>
+              </div>
+              <div>
+                <label class="block text-sm font-semibold mb-2">
+                  <i class="fas fa-arrows-alt-v text-green-400 mr-1"></i>Largo (m):
+                </label>
+                <input type="number" id="materialLength" placeholder="50" min="1"
+                  class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja"
+                  required>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">
+                <i class="fas fa-info-circle text-purple-400 mr-1"></i>Tipo de Material:
+              </label>
+              <select id="materialType"
+                class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+                <option value="standard">Estándar</option>
+                <option value="premium">Premium</option>
+                <option value="reflective">Reflectivo</option>
+                <option value="printed">Impreso</option>
+              </select>
+            </div>
+
+            <!-- Vista Previa del Cálculo -->
+            <div id="materialPreview" class="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-4 text-white"
+              style="display: none;">
+              <h4 class="font-bold mb-2">
+                <i class="fas fa-eye mr-2"></i>Vista Previa:
+              </h4>
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <div class="text-green-100">Costo por rollo:</div>
+                  <div id="previewCost" class="font-bold">S/ 0.00</div>
+                </div>
+                <div>
+                  <div class="text-green-100">Precio de venta:</div>
+                  <div id="previewPrice" class="font-bold">S/ 0.00</div>
+                </div>
+                <div>
+                  <div class="text-green-100">Ganancia:</div>
+                  <div id="previewMargin" class="font-bold">S/ 0.00</div>
+                </div>
+                <div>
+                  <div class="text-green-100">Por metro:</div>
+                  <div id="previewPerMeter" class="font-bold">S/ 0.00/m</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <button type="button" onclick="clearMaterialForm()"
+                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-xl transition">
+                <i class="fas fa-eraser mr-2"></i>Limpiar
+              </button>
+              <button type="submit"
+                class="flex-1 bg-naranja hover:bg-orange-600 text-white py-2 px-4 rounded-xl transition">
+                <i class="fas fa-save mr-2"></i>Guardar Material
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Lista de Materiales Existentes -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="bg-gradient-to-r from-plomo to-plomo-claro p-4">
+            <h4 class="text-white font-bold">
+              <i class="fas fa-list mr-2"></i>Materiales Registrados
+            </h4>
+          </div>
+
+          <div class="max-h-96 overflow-y-auto">
+            <div id="materialsList" class="divide-y divide-gray-200">
+              <!-- Se llenará dinámicamente -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor para Toast Notifications -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+  <script>
+    // Sistema de Toast Notifications
+    function showToast(message, type = 'info', duration = 3000) {
+      const toastContainer = document.getElementById('toastContainer');
+      const toastId = 'toast-' + Date.now();
+
+      const icons = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-circle',
+        warning: 'fas fa-exclamation-triangle',
+        info: 'fas fa-info-circle'
+      };
+
+      const colors = {
+        success: 'bg-naranja',
+        error: 'bg-red-500',
+        warning: 'bg-plomo',
+        info: 'bg-plomo-oscuro'
+      };
+
+      const toast = document.createElement('div');
+      toast.id = toastId;
+      toast.className = `${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 transform translate-x-full transition-transform duration-300 min-w-80`;
+
+      toast.innerHTML = `
+        <i class="${icons[type]} text-xl"></i>
+        <span class="flex-1">${message}</span>
+        <button onclick="closeToast('${toastId}')" class="text-white hover:text-gray-200">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+
+      toastContainer.appendChild(toast);
+
+      // Animar entrada
+      setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+      }, 100);
+
+      // Auto cerrar
+      if (duration > 0) {
+        setTimeout(() => {
+          closeToast(toastId);
+        }, duration);
+      }
+    }
+
+    function closeToast(toastId) {
+      const toast = document.getElementById(toastId);
+      if (toast) {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }
+    }
+
+    // Función helper para obtener precio real del material
+    function getMaterialRealPrice(material) {
+      // Si tiene el nuevo formato, usar costoSoles
+      if (material.costoSoles) {
+        return material.costoSoles;
+      }
+      // Si no, usar el formato anterior
+      return material.cost || 0;
+    }
+
+    // Función helper para obtener precio de venta
+    function getMaterialSalePrice(material) {
+      if (material.precioVenta) {
+        return material.precioVenta;
+      }
+      return (material.cost || 0) + (material.markup || 0);
+    }
+
+    // Función helper para obtener información del material
+    function getMaterialInfo(material) {
+      return {
+        codigo: material.codigo || `MAT-${material.id}`,
+        categoria: material.categoria || 'general',
+        calidad: material.calidad || 'estándar',
+        origen: material.origen || material.origin || 'N/A',
+        marca: material.marca || material.brand || 'Generic',
+        stock: material.stock || 'N/D',
+        disponible: material.disponible !== false
+      };
+    }
+
+    // Función para crear tooltip del material
+    function getMaterialTooltip(material) {
+      const info = getMaterialInfo(material);
+      let tooltip = `${info.marca} - ${info.calidad}\\n`;
+      tooltip += `Origen: ${info.origen}\\n`;
+      tooltip += `Stock: ${info.stock} rollos\\n`;
+      if (material.durabilidad) tooltip += `Durabilidad: ${material.durabilidad} años\\n`;
+      if (material.grosor) tooltip += `Grosor: ${material.grosor} micrones`;
+      return tooltip;
+    }
+
+    // Materiales completos con datos
+    const materials = [
+      { id: 1, name: "Vinil Gloss MGFILMS", cost: 220, markup: 220, width: 60, length: 50, discountCm: 9, type: 'standard', minOrder: 0.5 },
+      { id: 2, name: "Vinil Gloss MCCAL", cost: 260, markup: 220, width: 121, length: 25, discountCm: 9, type: 'standard', minOrder: 0.5 },
+      { id: 3, name: "Vinil Reflectivo", cost: 500, markup: 200, width: 60, length: 50, discountCm: 9, type: 'reflective', minOrder: 0.5 },
+      { id: 4, name: "Vinil Cromado", cost: 500, markup: 200, width: 60, length: 50, discountCm: 9, type: 'premium', minOrder: 0.5 },
+      { id: 5, name: "Polarizado Económico", cost: 120, markup: 200, width: 50, length: 60, discountCm: 9, type: 'standard', minOrder: 0.5 },
+      { id: 6, name: "Polarizado Taiwan DRS", cost: 250, markup: 200, width: 50, length: 60, discountCm: 9, type: 'standard', minOrder: 0.5 },
+      { id: 7, name: "Polarizado TurboFilm Corean", cost: 220, markup: 200, width: 75, length: 30, discountCm: 0, type: 'premium', minOrder: 0.5 },
+      { id: 8, name: "Polarizado NanoFilm Corean", cost: 590, markup: 500, width: 150, length: 30, discountCm: 9, type: 'premium', minOrder: 1.0 },
+      { id: 9, name: "Polarizado Nanocarbono Taiwan", cost: 225, markup: 200, width: 150, length: 15, discountCm: 0, type: 'premium', minOrder: 0.5 },
+      { id: 10, name: "Fibra de Carbono 3D", cost: 350, markup: 300, width: 150, length: 30, discountCm: 9, type: 'premium', minOrder: 0.5 },
+      { id: 11, name: "Fibra de Carbono 4D", cost: 400, markup: 300, width: 150, length: 30, discountCm: 9, type: 'premium', minOrder: 0.5 },
+      { id: 12, name: "Fibra de Carbono 5D", cost: 295, markup: 250, width: 150, length: 9, discountCm: 0, type: 'premium', minOrder: 0.5 },
+      { id: 13, name: "Vinil Panorámico", cost: 390, markup: 200, width: 150, length: 18, discountCm: 9, type: 'standard', minOrder: 1.0 },
+      { id: 14, name: "Vinil Impreso", cost: 25, markup: 0, width: 150, length: 1, discountCm: 0, type: 'printed', minOrder: 0.1 },
+      { id: 15, name: "Vinil Impreso Plastificado", cost: 35, markup: 0, width: 150, length: 1, discountCm: 0, type: 'printed', minOrder: 0.1 },
+      { id: 16, name: "Vinil M. Cromado", cost: 45, markup: 40, width: 150, length: 1, discountCm: 0, type: 'premium', minOrder: 0.2 },
+      { id: 17, name: "Vinil L. China", cost: 35, markup: 30, width: 150, length: 1, discountCm: 0, type: 'standard', minOrder: 0.2 },
+      { id: 18, name: "Fibra Carbono Camaleón", cost: 50, markup: 30, width: 150, length: 1, discountCm: 0, type: 'premium', minOrder: 0.2 },
+      { id: 20, name: "Fibra Carbono Negro 3D SINGCAL", cost: 260.10, markup: 150, width: 127, length: 50, discountCm: 0, type: 'premium', minOrder: 0.5 },
+      { id: 21, name: "Fibra Carbono Negro 3D LR", cost: 22, markup: 20, width: 150, length: 1, discountCm: 0, type: 'standard', minOrder: 0.2 },
+      { id: 22, name: "Vinil Fotocromatico Moldeable", cost: 25, markup: 20, width: 150, length: 1, discountCm: 0, type: 'premium', minOrder: 0.2 },
+      { id: 23, name: "Vinil Tornasol", cost: 15, markup: 10, width: 60, length: 1, discountCm: 0, type: 'standard', minOrder: 0.2 },
+      { id: 24, name: "Vinil Verde Tornasol", cost: 65, markup: 50, width: 120, length: 1, discountCm: 0, type: 'premium', minOrder: 0.2 },
+      { id: 25, name: "Vinil Militar Camuflado", cost: 30, markup: 30, width: 150, length: 1, discountCm: 0, type: 'standard', minOrder: 0.2 }
+    ];
+
+    let currentItems = [];
+    let itemCounter = 1;
+
+    // ===== SISTEMA DE CRONÓMETROS =====
+    let timerManager = {
+      activeTimer: null,        // ID del cronómetro activo
+      timers: {},              // Objeto con todos los cronómetros {itemId: timerData}
+      intervals: {}            // Intervalos de actualización {itemId: intervalId}
+    };
+
+    // Estados simplificados del cronómetro
+    const TIMER_STATES = {
+      PENDING: 'pending',      // No iniciado
+      ACTIVE: 'active',        // Corriendo
+      COMPLETED: 'completed'   // Terminado
+    };
+
+    // Cargar materiales al cargar la página
+    document.addEventListener('DOMContentLoaded', function () {
+      // Cargar base de datos de materiales
+      const loaded = loadMaterialsFromJSON();
+      if (!loaded) {
+        console.log('📦 Usando materiales por defecto - primera vez');
+        // Si es la primera vez, guardar los materiales por defecto
+        saveMaterialsToJSON();
+      }
+      
+      const select = document.getElementById('opciones');
+      if (select) {
+        select.innerHTML = '';
+        materials.forEach(material => {
+          const option = document.createElement('option');
+          option.value = material.id;
+          option.textContent = material.name;
+          select.appendChild(option);
+        });
+      }
+
+      // Ocultar mensaje de tabla vacía si hay productos
+      updateEmptyMessage();
+    });
+
+    // Función para cambiar tipo de trabajo
+    function cambiarTipoTrabajo() {
+      const modalidadVenta = document.querySelector('input[name="modalidadVenta"]:checked')?.value;
+
+      // Si es "solo material", no mostrar campos de trabajo
+      if (modalidadVenta === 'solo_material') {
+        return;
+      }
+
+      const tipoTrabajo = document.getElementById('tipoTrabajo').value;
+      const forradoFields = document.getElementById('forradoFields');
+      const complejidadDiv = document.getElementById('complejidadDiv');
+      const botonesRapidos = document.getElementById('botonesRapidos');
+
+      if (tipoTrabajo === 'forrado') {
+        if (forradoFields) forradoFields.style.display = 'block';
+        if (complejidadDiv) complejidadDiv.style.display = 'none';
+        if (botonesRapidos) botonesRapidos.style.display = 'grid';
+      } else {
+        if (forradoFields) forradoFields.style.display = 'none';
+        if (complejidadDiv) complejidadDiv.style.display = 'block';
+        if (botonesRapidos) botonesRapidos.style.display = 'none';
+      }
+    }
+
+    // Función para forrado rápido
+    function forradoRapido(superficie) {
+      // Cambiar a modo forrado
+      document.getElementById('tipoTrabajo').value = 'forrado';
+      cambiarTipoTrabajo();
+
+      // Seleccionar superficie
+      document.getElementById('tipoSuperficie').value = superficie;
+      autocompletarSuperficie();
+
+      // Scroll al formulario
+      document.getElementById('formulario').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Presets para superficies comunes (en cm)
+    const superficiePresets = {
+      'techo': { width: 140, height: 100, factor: 2.2 }, // Techo sedan promedio
+      'capo': { width: 120, height: 80, factor: 1.8 },
+      'parachoques': { width: 150, height: 30, factor: 2.5 }, // Más complejo por curvas
+      'puerta': { width: 80, height: 120, factor: 1.5 },
+      'lateral': { width: 400, height: 140, factor: 2.0 },
+      'spoiler': { width: 120, height: 15, factor: 2.8 }, // Muy complejo
+      'espejo': { width: 20, height: 15, factor: 3.0 }, // Pequeño pero muy complejo
+      'personalizado': { width: 0, height: 0, factor: 1.0 }
+    };
+
+    // Función para calcular costo de material mejorada
+    function calculateMaterialCost(width, height, material, quantity = 1, discount = 0, tipoTrabajo = 'plano', extras = {}) {
+      // Obtener modalidad de venta
+      const modalidadVenta = document.querySelector('input[name="modalidadVenta"]:checked')?.value || 'solo_material';
+      console.log(`\n🧮 === CALCULANDO: ${width} × ${height} cm ===`);
+      console.log(`📦 Material: ${material.name}`);
+
+      const area = width * height;
+      const materialWidthCm = material.width;
+
+      // 1. MODALIDAD DE VENTA - CÁLCULO DIFERENCIADO
+      let metersNeeded, wastePercentage, chargedMeters, strips = 1;
+
+      if (modalidadVenta === 'solo_material') {
+        // 📏 VENTA POR METRO - Sin desperdicio, metros exactos
+        metersNeeded = height / 100; // Convertir cm a metros
+
+        // Ajuste por ancho del material
+        if (width > materialWidthCm) {
+          strips = Math.ceil(width / materialWidthCm);
+          metersNeeded = metersNeeded * strips;
+          console.log(`📏 VENTA POR METRO: ${strips} franjas × ${height / 100}m = ${metersNeeded}m`);
+        }
+
+        // Sin desperdicio en venta por metro (cliente se lleva exacto)
+        wastePercentage = 0;
+        chargedMeters = Math.max(metersNeeded, material.minOrder || 0.5);
+
+        console.log(`📏 METROS EXACTOS: ${chargedMeters.toFixed(2)}m (sin desperdicio)`);
+
+      } else {
+        // 🔧 TRABAJO COMPLETO - Con desperdicio y factores
+        metersNeeded = height / 100;
+        console.log(`1️⃣ Metros base: ${height} cm ÷ 100 = ${metersNeeded} m`);
+
+        // Ajuste por ancho del material
+        if (width > materialWidthCm) {
+          strips = Math.ceil(width / materialWidthCm);
+          metersNeeded = metersNeeded * strips;
+          console.log(`2️⃣ Ancho ${width} cm > ${materialWidthCm} cm → ${strips} franjas`);
+        }
+
+        // Factor de dificultad (solo para forrado)
+        if (tipoTrabajo === 'forrado') {
+          const factorDificultad = parseFloat(extras.factorDificultad || 1.5);
+          metersNeeded = metersNeeded * factorDificultad;
+          console.log(`3️⃣ Factor forrado ${factorDificultad}x: ${metersNeeded} m`);
+        }
+
+        // Desperdicio real del rubro
+        wastePercentage = 0.08; // 8% estándar
+        if (tipoTrabajo === 'forrado') wastePercentage = 0.25; // 25% forrado
+        else if (tipoTrabajo === 'parcial') wastePercentage = 0.15; // 15% parcial
+
+        const totalMetersWithWaste = metersNeeded * (1 + wastePercentage);
+        chargedMeters = Math.max(totalMetersWithWaste, material.minOrder || 0.5);
+
+        console.log(`4️⃣ Desperdicio ${(wastePercentage * 100).toFixed(1)}%: ${chargedMeters.toFixed(2)} m`);
+      }
+
+      // 5. PEDIDO MÍNIMO YA APLICADO ARRIBA
+
+      // 6. CÁLCULO DE COSTOS REALES
+      const realCostPerRoll = getMaterialRealPrice(material);
+      const salePricePerRoll = getMaterialSalePrice(material);
+      const realCostPerMeter = realCostPerRoll / material.length;
+      const salePricePerMeter = salePricePerRoll / material.length;
+
+      console.log(`5️⃣ Costo real/metro: S/ ${realCostPerRoll} ÷ ${material.length}m = S/ ${realCostPerMeter.toFixed(2)}/m`);
+      console.log(`   Precio venta/metro: S/ ${salePricePerRoll} ÷ ${material.length}m = S/ ${salePricePerMeter.toFixed(2)}/m`);
+      console.log(`🔍 DEBUG - Material:`, material);
+      console.log(`🔍 DEBUG - realCostPerRoll: ${realCostPerRoll}, salePricePerRoll: ${salePricePerRoll}`);
+
+      // 7. GANANCIA PORCENTUAL REAL
+      const marginPercentage = material.margenGanancia || ((salePricePerRoll - realCostPerRoll) / realCostPerRoll * 100);
+      console.log(`   Margen ganancia: ${marginPercentage.toFixed(1)}%`);
+
+      // 8. COSTO MATERIAL FINAL
+      const realMaterialCost = chargedMeters * realCostPerMeter;
+      const saleMaterialCost = chargedMeters * salePricePerMeter;
+      console.log(`6️⃣ Costo material: ${chargedMeters.toFixed(2)}m × S/ ${salePricePerMeter.toFixed(2)} = S/ ${saleMaterialCost.toFixed(2)}`);
+
+      // 9. MANO DE OBRA SEGÚN MODALIDAD
+      let laborCost = 0;
+
+      if (modalidadVenta === 'solo_material') {
+        // Sin mano de obra en venta por metro
+        laborCost = 0;
+        console.log(`📏 VENTA POR METRO: Sin mano de obra`);
+
+      } else if (modalidadVenta === 'trabajo_completo') {
+        // 🔧 TRABAJO COMPLETO - Mano de obra obligatoria
+        const areaM2 = (width * height * quantity) / 10000;
+
+        if (tipoTrabajo === 'forrado') {
+          // Para forrado: usar tiempo estimado
+          const tiempoHoras = parseFloat(extras.tiempoEstimado || 2);
+          laborCost = tiempoHoras * 25; // S/ 25 por hora
+        } else {
+          // Para trabajos planos: usar área
+          laborCost = areaM2 * 15; // S/ 15 por m² básico
+        }
+        console.log(`🔧 TRABAJO COMPLETO: Área ${areaM2.toFixed(2)}m² - Mano obra S/ ${laborCost.toFixed(2)}`);
+
+      } else if (modalidadVenta === 'mixto') {
+        // 🎯 MIXTO - Cliente decide según configuración
+        const laborType = document.getElementById('laborType')?.value || 'none';
+        const areaM2 = (width * height * quantity) / 10000;
+
+        if (laborType !== 'none') {
+          // Tarifas según configuración del select
+          const laborRates = {
+            'standard': 15,      // S/ 15/m² - Básica
+            'complex': 25,       // S/ 25/m² - Compleja
+            'premium': 40,       // S/ 40/m² - Premium
+            'vehicle_full': 60,  // S/ 60/m² - Vehículo completo
+            'architectural': 35, // S/ 35/m² - Arquitectónica
+            'weeding': 12        // S/ 12/m² - Solo desmalezado
+          };
+
+          const rate = laborRates[laborType] || 15;
+
+          if (tipoTrabajo === 'forrado' && (laborType === 'premium' || laborType === 'vehicle_full')) {
+            // Para forrado premium: usar tiempo estimado
+            const tiempoHoras = parseFloat(extras.tiempoEstimado || 2);
+            laborCost = tiempoHoras * 25;
+          } else {
+            // Para otros casos: usar área
+            laborCost = areaM2 * rate;
+          }
+
+          console.log(`🎯 MIXTO: ${laborType} - Área ${areaM2.toFixed(2)}m² × S/ ${rate} = S/ ${laborCost.toFixed(2)}`);
+        } else {
+          laborCost = 0;
+          console.log(`🎯 MIXTO: Sin mano de obra seleccionada`);
+        }
+      }
+
+      // 10. CANTIDAD Y DESCUENTO
+      const subtotalMaterial = saleMaterialCost * quantity;
+      const subtotalTotal = subtotalMaterial + laborCost;
+      const discountAmount = subtotalTotal * (discount / 100);
+      const finalCost = subtotalTotal - discountAmount;
+
+      console.log(`8️⃣ Cantidad ${quantity}: S/ ${subtotalTotal.toFixed(2)}`);
+      if (discount > 0) {
+        console.log(`9️⃣ Descuento ${discount}%: -S/ ${discountAmount.toFixed(2)}`);
+      }
+      console.log(`✅ TOTAL FINAL: S/ ${finalCost.toFixed(2)}\n`);
+
+      return {
+        // Costos principales
+        unitCost: saleMaterialCost,
+        realUnitCost: realMaterialCost,
+        totalCost: finalCost,
+        laborCost: laborCost,
+        discountAmount: discountAmount,
+
+        // Información técnica
+        metersUsed: chargedMeters,
+        metersNeeded: metersNeeded,
+        wastePercentage: wastePercentage * 100,
+        hasMinimumCharge: chargedMeters > metersNeeded,
+        marginPercentage: marginPercentage,
+
+        // Costos por metro
+        costPerMeter: salePricePerMeter,
+        realCostPerMeter: realCostPerMeter,
+
+        // Información adicional
+        area: area / 10000, // en m²
+        tipoTrabajo: tipoTrabajo,
+        strips: strips
+      };
+    }
+
+    // Función para generar card mobile
+    function generateMobileCard(itemData, calculation, material) {
+      const mobileCards = document.getElementById('mobileCards');
+      const emptyMessageMobile = document.getElementById('emptyMessageMobile');
+
+      if (!mobileCards) {
+        console.log('❌ No se puede generar card mobile - contenedor no encontrado');
+        return;
+      }
+
+      // Ocultar mensaje vacío
+      if (emptyMessageMobile) {
+        emptyMessageMobile.style.display = 'none';
+      }
+
+      const tipoIcon = itemData.tipoTrabajo === 'forrado' ? '<i class="fas fa-car text-blue-500"></i>' :
+        itemData.tipoTrabajo === 'parcial' ? '<i class="fas fa-ruler text-yellow-500"></i>' :
+          '<i class="fas fa-file-alt text-gray-500"></i>';
+
+      // Generar card básica sin costos reales (se agregan después con toggle)
+      console.log(`📱 Generando card mobile básica para "${itemData.materialName}"`);
+      // Los costos reales se agregan dinámicamente con toggleCostDisplay()
+
+      const cardHTML = `
+        <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-naranja shadow-sm mobile-card" data-item-id="${itemData.id}">
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1">
+              <h4 class="font-semibold text-gray-800 text-sm">
+                ${tipoIcon} ${itemData.materialName}
+              </h4>
+              <p class="text-xs text-gray-500 mt-1">
+                <i class="fas fa-expand-arrows-alt text-gray-400"></i> ${itemData.width} × ${itemData.height} cm
+                <span class="ml-2"><i class="fas fa-hashtag text-gray-400"></i> ${itemData.quantity}</span>
+              </p>
+            </div>
+            <div class="text-right">
+              <p class="font-bold text-naranja">S/ ${calculation.totalCost.toFixed(2)}</p>
+              <p class="text-xs text-gray-500">
+                <i class="fas fa-ruler text-blue-400"></i> ${calculation.metersUsed.toFixed(2)}m
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex justify-between items-center text-xs text-gray-600 mt-3">
+            <div>
+              ${calculation.laborCost > 0 ? `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">+ Mano obra: S/ ${calculation.laborCost.toFixed(2)}</span>` : ''}
+              ${itemData.discount > 0 ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded ml-1">-${itemData.discount}%</span>` : ''}
+            </div>
+            <div class="flex gap-1">
+              <button class="bg-plomo hover:bg-plomo-claro text-white px-2 py-1 rounded text-xs" onclick="editarFilaMobile(${itemData.id})">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs" onclick="eliminarFilaMobile(${itemData.id})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      mobileCards.insertAdjacentHTML('beforeend', cardHTML);
+      console.log(`✅ Card mobile insertada para "${itemData.materialName}"`);
+
+      // Verificar que la card se insertó correctamente
+      const insertedCard = mobileCards.lastElementChild;
+      if (insertedCard) {
+        const realCostSection = insertedCard.querySelector('.mobile-real-cost');
+        console.log(`📱 Card insertada - Tiene sección de costos reales: ${realCostSection ? 'SÍ' : 'NO'}`);
+      }
+    }
+
+    // Función para actualizar vista mobile
+    function updateMobileView() {
+      const mobileCards = document.getElementById('mobileCards');
+      const emptyMessageMobile = document.getElementById('emptyMessageMobile');
+
+      if (currentItems.length === 0) {
+        mobileCards.innerHTML = '';
+        emptyMessageMobile.style.display = 'block';
+      } else {
+        emptyMessageMobile.style.display = 'none';
+      }
+    }
+
+    // Función para actualizar etiqueta de cantidad según modalidad
+    function updateCantidadLabel(modalidad) {
+      const cantidadLabel = document.getElementById('cantidadLabel');
+      const cantidadInput = document.getElementById('cantidad');
+      const cantidadHelp = document.getElementById('cantidadHelp');
+
+      if (cantidadLabel && cantidadInput && cantidadHelp) {
+        switch (modalidad) {
+          case 'solo_material':
+            cantidadLabel.innerHTML = 'Piezas Iguales:';
+            cantidadInput.placeholder = '1';
+            cantidadInput.title = 'Número de piezas idénticas que necesita el cliente';
+            cantidadHelp.innerHTML = '<i class="fas fa-info-circle text-blue-400 mr-1"></i>Piezas idénticas de 150×100cm cada una';
+            break;
+
+          case 'trabajo_completo':
+            cantidadLabel.innerHTML = 'Cantidad:';
+            cantidadInput.placeholder = '1';
+            cantidadInput.title = 'Número de trabajos/instalaciones a realizar';
+            cantidadHelp.innerHTML = '<i class="fas fa-tools text-green-400 mr-1"></i>Trabajos de instalación a realizar';
+            break;
+
+          case 'mixto':
+            cantidadLabel.innerHTML = 'Cantidad:';
+            cantidadInput.placeholder = '1';
+            cantidadInput.title = 'Número de unidades del producto';
+            cantidadHelp.innerHTML = '<i class="fas fa-sliders-h text-yellow-400 mr-1"></i>Unidades del producto solicitado';
+            break;
+        }
+      }
+    }
+
+    // Función para actualizar indicador de modalidad
+    function updateModalidadIndicador(titulo, descripcion, color) {
+      const indicador = document.getElementById('modalidadIndicador');
+      const texto = document.getElementById('modalidadTexto');
+
+      if (indicador && texto) {
+        // Actualizar texto
+        texto.innerHTML = `${titulo}: ${descripcion}`;
+
+        // Actualizar colores
+        indicador.className = `bg-${color}-50 border border-${color}-200 rounded-lg p-3 mb-4 text-center`;
+        texto.className = `text-${color}-700 font-semibold`;
+
+        // Actualizar icono
+        const icon = texto.querySelector('i');
+        if (icon) {
+          icon.className = `fas fa-info-circle text-${color}-500 mr-2`;
+        }
+      }
+    }
+
+    // Función para manejar cambio de modalidad
+    function handleModalidadChange() {
+      const modalidadVenta = document.querySelector('input[name="modalidadVenta"]:checked')?.value;
+      const laborTypeElement = document.getElementById('laborType');
+
+      if (!laborTypeElement) {
+        console.log('❌ Elemento laborType no encontrado');
+        return;
+      }
+
+      const laborTypeDiv = laborTypeElement.parentElement;
+
+      // Obtener elementos de tipo de trabajo y complejidad
+      const tipoTrabajoElement = document.getElementById('tipoTrabajo');
+      const tipoTrabajoDiv = tipoTrabajoElement?.parentElement;
+      const complejidadDiv = document.getElementById('complejidadDiv');
+      const forradoFields = document.getElementById('forradoFields');
+      const botonesRapidos = document.getElementById('botonesRapidos');
+
+      if (modalidadVenta === 'solo_material') {
+        // 📏 SOLO MATERIAL - Ocultar campos de trabajo
+        laborTypeDiv.style.display = 'none';
+        if (tipoTrabajoDiv) tipoTrabajoDiv.style.display = 'none';
+        if (complejidadDiv) complejidadDiv.style.display = 'none';
+        if (forradoFields) forradoFields.style.display = 'none';
+        if (botonesRapidos) botonesRapidos.style.display = 'none';
+
+        // Resetear valores
+        document.getElementById('laborType').value = 'none';
+        if (tipoTrabajoElement) tipoTrabajoElement.value = 'plano';
+
+        // Actualizar indicador y etiquetas
+        updateModalidadIndicador('📏 Solo Material', 'Venta por metros lineales - Sin instalación', 'blue');
+        updateCantidadLabel('solo_material');
+
+        showToast('Modalidad: Solo Material - Venta por metros', 'info');
+
+      } else if (modalidadVenta === 'trabajo_completo') {
+        // 🔧 TRABAJO COMPLETO - Mostrar todos los campos
+        laborTypeDiv.style.display = 'block';
+        if (tipoTrabajoDiv) tipoTrabajoDiv.style.display = 'block';
+        if (complejidadDiv) complejidadDiv.style.display = 'block';
+
+        // Habilitar opciones
+        laborTypeDiv.style.opacity = '1';
+        laborTypeDiv.style.pointerEvents = 'auto';
+
+        // Valores por defecto
+        document.getElementById('laborType').value = 'standard';
+        if (tipoTrabajoElement) tipoTrabajoElement.value = 'plano';
+
+        // Actualizar vista según tipo de trabajo
+        cambiarTipoTrabajo();
+
+        // Actualizar indicador y etiquetas
+        updateModalidadIndicador('🔧 Trabajo Completo', 'Material + instalación incluida', 'green');
+        updateCantidadLabel('trabajo_completo');
+
+        showToast('Modalidad: Trabajo Completo - Material + instalación', 'success');
+
+      } else if (modalidadVenta === 'mixto') {
+        // 🎯 MIXTO - Mostrar campos pero permitir elegir
+        laborTypeDiv.style.display = 'block';
+        if (tipoTrabajoDiv) tipoTrabajoDiv.style.display = 'block';
+        if (complejidadDiv) complejidadDiv.style.display = 'block';
+
+        // Habilitar opciones
+        laborTypeDiv.style.opacity = '1';
+        laborTypeDiv.style.pointerEvents = 'auto';
+
+        // Valores neutros
+        document.getElementById('laborType').value = 'none';
+        if (tipoTrabajoElement) tipoTrabajoElement.value = 'plano';
+
+        // Actualizar vista según tipo de trabajo
+        cambiarTipoTrabajo();
+
+        // Actualizar indicador y etiquetas
+        updateModalidadIndicador('🎯 Modalidad Mixta', 'Cliente elige qué incluir', 'yellow');
+        updateCantidadLabel('mixto');
+
+        showToast('Modalidad: Mixta - Cliente elige qué incluir', 'warning');
+      }
+
+      // Actualizar totales si hay productos
+      if (currentItems.length > 0) {
+        updateTotal();
+      }
+    }
+
+    // Agregar event listeners para modalidad
+    document.addEventListener('DOMContentLoaded', function () {
+      const modalidadRadios = document.querySelectorAll('input[name="modalidadVenta"]');
+      modalidadRadios.forEach(radio => {
+        radio.addEventListener('change', handleModalidadChange);
+      });
+
+      // Inicializar modalidad
+      handleModalidadChange();
+    });
+
+    // Función de test para todas las modalidades
+    function testAllModes() {
+      const material = {
+        id: 21,
+        name: "Fibra Carbono Negro 3D LR",
+        cost: 22,
+        markup: 20,
+        width: 150,
+        length: 1,
+        minOrder: 0.2
+      };
+
+      console.log('🧪 TEST TODAS LAS MODALIDADES:');
+      console.log('Material:', material.name);
+      console.log('Dimensiones: 150×100cm, Cantidad: 1');
+
+      // Test Solo Material
+      document.querySelector('input[name="modalidadVenta"][value="solo_material"]').checked = true;
+      const soloMaterial = calculateMaterialCost(150, 100, material, 1, 0, 'plano', {});
+
+      // Test Trabajo Completo
+      document.querySelector('input[name="modalidadVenta"][value="trabajo_completo"]').checked = true;
+      const trabajoCompleto = calculateMaterialCost(150, 100, material, 1, 0, 'plano', {});
+
+      // Test Mixto con mano de obra
+      document.querySelector('input[name="modalidadVenta"][value="mixto"]').checked = true;
+      document.getElementById('laborType').value = 'standard';
+      const mixtoConLabor = calculateMaterialCost(150, 100, material, 1, 0, 'plano', {});
+
+      // Test Mixto sin mano de obra
+      document.getElementById('laborType').value = 'none';
+      const mixtoSinLabor = calculateMaterialCost(150, 100, material, 1, 0, 'plano', {});
+
+      alert(`TEST MODALIDADES:
+      
+📏 SOLO MATERIAL:
+Material: S/ ${soloMaterial.unitCost?.toFixed(2)}
+Mano obra: S/ ${soloMaterial.laborCost?.toFixed(2)}
+Total: S/ ${soloMaterial.totalCost?.toFixed(2)}
+
+🔧 TRABAJO COMPLETO:
+Material: S/ ${trabajoCompleto.unitCost?.toFixed(2)}
+Mano obra: S/ ${trabajoCompleto.laborCost?.toFixed(2)}
+Total: S/ ${trabajoCompleto.totalCost?.toFixed(2)}
+
+🎯 MIXTO CON LABOR:
+Material: S/ ${mixtoConLabor.unitCost?.toFixed(2)}
+Mano obra: S/ ${mixtoConLabor.laborCost?.toFixed(2)}
+Total: S/ ${mixtoConLabor.totalCost?.toFixed(2)}
+
+🎯 MIXTO SIN LABOR:
+Material: S/ ${mixtoSinLabor.unitCost?.toFixed(2)}
+Mano obra: S/ ${mixtoSinLabor.laborCost?.toFixed(2)}
+Total: S/ ${mixtoSinLabor.totalCost?.toFixed(2)}`);
+    }
+
+    // Función de test para cálculo específico
+    function testCalculation() {
+      const material = {
+        id: 21,
+        name: "Fibra Carbono Negro 3D LR",
+        cost: 22,
+        markup: 20,
+        width: 150,
+        length: 1,
+        minOrder: 0.2
+      };
+
+      console.log('🧪 TEST CÁLCULO MANUAL:');
+      console.log('Material:', material);
+
+      const result = calculateMaterialCost(150, 100, material, 1, 0, 'plano', {});
+
+      console.log('Resultado:', result);
+
+      alert(`TEST CÁLCULO:
+Material: ${material.name}
+Dimensiones: 150×100cm
+Metros usados: ${result.metersUsed}m
+Costo real: S/ ${result.realUnitCost?.toFixed(2) || 'N/A'}
+Precio venta: S/ ${result.unitCost?.toFixed(2) || 'N/A'}
+Total: S/ ${result.totalCost?.toFixed(2) || 'N/A'}`);
+    }
+
+    // Función de test para debug
+    function testToggle() {
+      const showRealCosts = document.getElementById('showRealCosts')?.checked || false;
+      console.log(`🧪 TEST - Estado del checkbox: ${showRealCosts}`);
+      console.log(`🧪 TEST - Número de items: ${currentItems.length}`);
+      console.log(`🧪 TEST - Cards mobile existentes: ${document.querySelectorAll('.mobile-card').length}`);
+      console.log(`🧪 TEST - Secciones de costos reales: ${document.querySelectorAll('.mobile-real-cost').length}`);
+
+      // Forzar regeneración
+      regenerateMobileCards();
+
+      alert(`Estado: ${showRealCosts ? 'ACTIVADO' : 'DESACTIVADO'}\nItems: ${currentItems.length}\nCards: ${document.querySelectorAll('.mobile-card').length}`);
+    }
+
+    // Funciones para mobile
+    function editarFilaMobile(itemId) {
+      // Buscar la fila correspondiente en la tabla desktop
+      const rows = document.querySelectorAll('#miTabla tbody .table-row');
+      rows.forEach((row, index) => {
+        const itemCell = row.querySelector('.cell-item');
+        if (itemCell && parseInt(itemCell.textContent) === itemId) {
+          editarFila(row.querySelector('.btn-editar'));
+        }
+      });
+    }
+
+    function eliminarFilaMobile(itemId) {
+      // Eliminar card mobile
+      const card = document.querySelector(`[data-item-id="${itemId}"]`);
+      if (card) {
+        card.remove();
+      }
+
+      // Buscar y eliminar fila correspondiente en tabla desktop
+      const rows = document.querySelectorAll('#miTabla tbody .table-row');
+      rows.forEach((row, index) => {
+        const itemCell = row.querySelector('.cell-item');
+        if (itemCell && parseInt(itemCell.textContent) === itemId) {
+          eliminarFila(row.querySelector('.btn-eliminar'));
+        }
+      });
+
+      updateMobileView();
+    }
+
+    // Función para autocompletar dimensiones según superficie
+    function autocompletarSuperficie() {
+      const tipoSuperficie = document.getElementById('tipoSuperficie').value;
+      const preset = superficiePresets[tipoSuperficie];
+
+      if (preset && tipoSuperficie !== 'personalizado') {
+        document.getElementById('ancho').value = preset.width;
+        document.getElementById('alto').value = preset.height;
+        document.getElementById('factorDificultad').value = preset.factor;
+
+        // Estimar tiempo según superficie
+        const tiempoEstimado = Math.max(1, Math.round(preset.factor * 1.5));
+        document.getElementById('tiempoEstimado').value = tiempoEstimado;
+      }
+    }
+
+    // Agregar event listener para autocompletar
+    document.addEventListener('DOMContentLoaded', function () {
+      // ... código existente ...
+
+      // Agregar listener para autocompletar superficie
+      const tipoSuperficieSelect = document.getElementById('tipoSuperficie');
+      if (tipoSuperficieSelect) {
+        tipoSuperficieSelect.addEventListener('change', autocompletarSuperficie);
+      }
+
+      // Event listeners para recalcular totales automáticamente
+      const laborTypeSelect = document.getElementById('laborType');
+      const includeIGVCheckbox = document.getElementById('includeIGV');
+
+      if (laborTypeSelect) {
+        laborTypeSelect.addEventListener('change', updateTotal);
+      }
+
+      if (includeIGVCheckbox) {
+        includeIGVCheckbox.addEventListener('change', updateTotal);
+      }
+    });
+
+    // Función para agregar o actualizar fila en la tabla
+    function agregarFila() {
+      const width = parseFloat(document.getElementById('ancho').value);
+      const height = parseFloat(document.getElementById('alto').value);
+      const quantity = parseInt(document.getElementById('cantidad').value) || 1;
+      const discount = parseFloat(document.getElementById('descuento').value) || 0;
+      const tipoTrabajo = document.getElementById('tipoTrabajo').value;
+      const select = document.getElementById('opciones');
+
+      if (!width || !height || width <= 0 || height <= 0) {
+        showToast('Por favor ingrese valores válidos para ancho y alto', 'warning');
+        return;
+      }
+
+      const materialId = parseInt(select.value);
+      const material = materials.find(m => m.id === materialId);
+
+      if (!material) {
+        showToast('Por favor seleccione un material', 'warning');
+        return;
+      }
+
+      // Obtener datos extras para forrado
+      const extras = {};
+      if (tipoTrabajo === 'forrado') {
+        extras.factorDificultad = document.getElementById('factorDificultad').value;
+        extras.tiempoEstimado = document.getElementById('tiempoEstimado').value;
+        extras.tipoSuperficie = document.getElementById('tipoSuperficie').value;
+      }
+
+      const calculation = calculateMaterialCost(width, height, material, quantity, discount, tipoTrabajo, extras);
+
+      // Crear descripción del trabajo con modalidad
+      const modalidadVenta = document.querySelector('input[name="modalidadVenta"]:checked')?.value || 'solo_material';
+      let descripcionTrabajo = material.name;
+      let descripcionBoletaLimpia = material.name; // Para la boleta sin HTML
+
+      // Agregar indicador de modalidad (solo para la tabla)
+      const modalidadIcon = {
+        'solo_material': '<i class="fas fa-tape text-blue-500" title="Solo Material"></i>',
+        'trabajo_completo': '<i class="fas fa-tools text-green-500" title="Trabajo Completo"></i>',
+        'mixto': '<i class="fas fa-sliders-h text-yellow-500" title="Modalidad Mixta"></i>'
+      };
+
+      // Texto limpio para la boleta
+      const modalidadTexto = {
+        'solo_material': 'Solo Material',
+        'trabajo_completo': 'Trabajo Completo',
+        'mixto': 'Modalidad Mixta'
+      };
+
+      if (tipoTrabajo === 'forrado') {
+        const superficie = document.getElementById('tipoSuperficie').options[document.getElementById('tipoSuperficie').selectedIndex].text;
+        descripcionTrabajo += ` - ${superficie}`;
+        descripcionBoletaLimpia += ` - ${superficie}`;
+      }
+
+      // Agregar indicador de modalidad al nombre (solo para tabla)
+      descripcionTrabajo = `${modalidadIcon[modalidadVenta]} ${descripcionTrabajo}`;
+
+      // Crear HTML de la fila
+      const tipoIcon = tipoTrabajo === 'forrado' ? '<i class="fas fa-car text-blue-500"></i>' :
+        tipoTrabajo === 'parcial' ? '<i class="fas fa-ruler text-yellow-500"></i>' :
+          '<i class="fas fa-file-alt text-gray-500"></i>';
+
+      const rowHTML = `
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-center">
+          <span class="cell-item font-bold text-naranja">${itemCounter}</span>
+        </td>
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3">
+          <div class="min-w-[180px]">
+            <span class="cell-material font-semibold text-gray-800 text-sm tooltip" data-tooltip="${getMaterialTooltip(material)}">
+              ${tipoIcon} ${descripcionTrabajo}
+            </span>
+            ${calculation.laborCost > 0 ? `<br><small class="text-blue-600"><i class="fas fa-tools mr-1"></i>+ Mano obra: S/ ${calculation.laborCost.toFixed(2)}</small>` : ''}
+            ${material.codigo ? `<br><small class="text-gray-500">${material.codigo}</small>` : ''}
+          </div>
+        </td>
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-center">
+          <span class="cell-dimensions text-sm whitespace-nowrap">${width}×${height}</span>
+          <br><small class="text-gray-500">cm</small>
+        </td>
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-center">
+          <span class="cell-quantity font-bold text-lg">${quantity}</span>
+        </td>
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-center timer-start-cell">
+          <div class="text-xs text-gray-500" id="startTime-${itemCounter}">--:--</div>
+        </td>
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-center timer-duration-cell">
+          <div class="text-xs font-mono" id="duration-${itemCounter}">00:00:00</div>
+        </td>
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-center timer-control-cell">
+          <button onclick="toggleTimer('${itemCounter}')" id="timerBtn-${itemCounter}" class="timer-btn timer-btn-start bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs transition">
+            <i class="fas fa-play"></i>
+          </button>
+        </td>
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-center">
+          <span class="cell-area font-semibold text-blue-600 tooltip" data-tooltip="Metros lineales (incluye ${calculation.wastePercentage ? calculation.wastePercentage.toFixed(1) : '8'}% desperdicio)">
+            ${calculation.metersUsed.toFixed(2)}m
+          </span>
+          <br><small class="text-gray-500">${(calculation.area * 10000).toFixed(0)}cm²</small>
+        </td>
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-right">
+          <span class="cell-price font-bold text-green-600">S/ ${calculation.unitCost.toFixed(2)}</span>
+        </td>
+        <td class="cost-real-cell px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-right" style="display: none;">
+          <div class="text-right min-w-[120px]">
+            <div class="text-green-700 font-bold">S/ ${calculation.realUnitCost ? calculation.realUnitCost.toFixed(2) : getMaterialRealPrice(material).toFixed(2)}</div>
+            <small class="text-gray-600 block">Solo Material</small>
+            <small class="text-green-600">${calculation.marginPercentage ? calculation.marginPercentage.toFixed(1) : (material.margenGanancia || 35)}% ganancia</small>
+            <small class="text-blue-500 block">${material.width || material.ancho}×${material.length || material.largo}m</small>
+          </div>
+        </td>
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-center">
+          ${discount > 0 ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">-${discount}%</span>` : '<span class="text-gray-400">—</span>'}
+        </td>
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-right">
+          <span class="cell-subtotal font-bold text-naranja text-lg">S/ ${calculation.totalCost.toFixed(2)}</span>
+        </td>
+        <td class="px-2 sm:px-3 lg:px-4 py-2 sm:py-3 text-center">
+          <div class="flex flex-col sm:flex-row gap-1 justify-center min-w-[80px]">
+            <button class="btn-editar bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs whitespace-nowrap" onclick="editarFila(this)">
+              <i class="fas fa-edit"></i><span class="hidden sm:inline ml-1">Editar</span>
+            </button>
+            <button class="btn-eliminar bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs whitespace-nowrap" onclick="eliminarFila(this)">
+              <i class="fas fa-trash"></i><span class="hidden sm:inline ml-1">Eliminar</span>
+            </button>
+          </div>
+        </td>
+      `;
+
+      const itemData = {
+        id: itemCounter,
+        materialName: descripcionBoletaLimpia, // Usar descripción sin HTML para la boleta
+        materialNameHTML: descripcionTrabajo, // Guardar versión con HTML para la tabla
+        width, height, quantity, discount,
+        tipoTrabajo: tipoTrabajo,
+        totalCost: calculation.totalCost,
+        laborCost: calculation.laborCost || 0,
+        extras: extras
+      };
+
+      // Si estamos editando, actualizar la fila existente
+      if (editingRowIndex >= 0) {
+        // Obtener la fila existente
+        const tbody = document.querySelector('#miTabla tbody');
+        const existingRow = tbody.children[editingRowIndex];
+
+        // Mantener el número de item original
+        const originalItemNumber = currentItems[editingRowIndex].id;
+
+        // Crear el HTML de la nueva fila con el número original
+        const updatedRowHTML = rowHTML.replace(
+          `<span class="cell-item">${itemCounter}</span>`,
+          `<span class="cell-item">${originalItemNumber}</span>`
+        );
+
+        // Reemplazar solo el contenido de la fila existente
+        existingRow.innerHTML = updatedRowHTML;
+        existingRow.className = 'table-row'; // Asegurar que tenga la clase correcta
+
+        // Actualizar dataset de la fila existente
+        existingRow.dataset.totalCost = calculation.totalCost;
+        existingRow.dataset.laborCost = calculation.laborCost || 0;
+        existingRow.dataset.discountAmount = calculation.discountAmount || 0;
+
+        // Actualizar datos en el array
+        itemData.id = originalItemNumber;
+        currentItems[editingRowIndex] = itemData;
+
+        // Reinicializar cronómetro si no existe
+        if (!timerManager.timers[originalItemNumber]) {
+          initializeTimer(originalItemNumber);
+        }
+
+        // Cancelar modo edición
+        cancelarEdicion();
+
+        // Mostrar toast de éxito
+        showToast('Producto actualizado correctamente', 'success');
+
+        // Mostrar mensaje visual en la fila
+        const originalBg = existingRow.style.backgroundColor;
+        existingRow.style.backgroundColor = '#D1FAE5';
+        setTimeout(() => {
+          existingRow.style.backgroundColor = originalBg;
+        }, 1000);
+
+        // Aplicar estado de costos reales si está activo
+        const showCosts = document.getElementById('showRealCosts').checked;
+        if (showCosts) {
+          const costCell = existingRow.querySelector('.cost-real-cell');
+          if (costCell) {
+            costCell.style.display = 'table-cell';
+          }
+        }
+
+      } else {
+        // Agregar nueva fila
+        const tbody = document.querySelector('#miTabla tbody');
+        const newRow = tbody.insertRow();
+        newRow.className = 'table-row';
+        newRow.innerHTML = rowHTML;
+
+        // Ya no necesitamos cards mobile - solo tabla con scroll
+
+        newRow.dataset.totalCost = calculation.totalCost;
+        newRow.dataset.laborCost = calculation.laborCost || 0;
+        newRow.dataset.discountAmount = calculation.discountAmount || 0;
+        currentItems.push(itemData);
+
+        // Inicializar cronómetro para este item
+        initializeTimer(itemCounter);
+
+        itemCounter++;
+
+        // Aplicar estado de costos reales si está activo
+        const showCosts = document.getElementById('showRealCosts').checked;
+        if (showCosts) {
+          const costCell = newRow.querySelector('.cost-real-cell');
+          if (costCell) {
+            costCell.style.display = 'table-cell';
+          }
+        }
+
+        // Limpiar formulario
+        document.getElementById('ancho').value = '';
+        document.getElementById('alto').value = '';
+        document.getElementById('cantidad').value = '1';
+        document.getElementById('descuento').value = '';
+        if (tipoTrabajo === 'forrado') {
+          document.getElementById('tiempoEstimado').value = '';
+        }
+
+        // Toast de éxito para nuevo producto
+        showToast('Producto agregado correctamente', 'success');
+      }
+
+      updateEmptyMessage();
+      updateTotal();
+    }
+
+    // Variable para controlar modo edición
+    let editingRowIndex = -1;
+
+    // Función para editar fila
+    function editarFila(button) {
+      const row = button.closest('tr');
+      const index = Array.from(row.parentNode.children).indexOf(row);
+      const item = currentItems[index];
+
+      if (!item) return;
+
+      // Marcar que estamos editando
+      editingRowIndex = index;
+
+      // Llenar el formulario con los datos existentes
+      document.getElementById('ancho').value = item.width;
+      document.getElementById('alto').value = item.height;
+      document.getElementById('cantidad').value = item.quantity;
+      document.getElementById('descuento').value = item.discount || 0;
+
+      // Seleccionar el material correcto
+      const materialSelect = document.getElementById('opciones');
+      const materialOption = Array.from(materialSelect.options).find(option =>
+        materials.find(m => m.id == option.value && m.name === item.materialName.replace(/^[🚗📐📄]\s/, '').split(' - ')[0])
+      );
+      if (materialOption) {
+        materialSelect.value = materialOption.value;
+      }
+
+      // Configurar tipo de trabajo
+      if (item.tipoTrabajo) {
+        document.getElementById('tipoTrabajo').value = item.tipoTrabajo;
+        cambiarTipoTrabajo();
+
+        if (item.tipoTrabajo === 'forrado' && item.extras) {
+          document.getElementById('factorDificultad').value = item.extras.factorDificultad || 1.5;
+          document.getElementById('tiempoEstimado').value = item.extras.tiempoEstimado || 2;
+          if (item.extras.tipoSuperficie) {
+            document.getElementById('tipoSuperficie').value = item.extras.tipoSuperficie;
+          }
+        }
+      }
+
+      // Cambiar el botón de agregar a actualizar
+      const btnAgregar = document.getElementById('agregar');
+      btnAgregar.value = 'Actualizar Producto';
+      btnAgregar.style.backgroundColor = '#10B981'; // Verde
+
+      // Agregar botón de cancelar
+      if (!document.getElementById('btnCancelar')) {
+        const btnCancelar = document.createElement('input');
+        btnCancelar.type = 'button';
+        btnCancelar.id = 'btnCancelar';
+        btnCancelar.value = 'Cancelar Edición';
+        btnCancelar.className = 'w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-xl transition mt-2';
+        btnCancelar.onclick = cancelarEdicion;
+        btnAgregar.parentNode.appendChild(btnCancelar);
+      }
+
+      // Scroll al formulario
+      document.getElementById('formulario').scrollIntoView({ behavior: 'smooth' });
+
+      // Resaltar la fila que se está editando
+      document.querySelectorAll('.table-row').forEach(r => r.classList.remove('editing'));
+      row.classList.add('editing');
+    }
+
+    // Función para cancelar edición
+    function cancelarEdicion() {
+      editingRowIndex = -1;
+
+      // Limpiar formulario
+      document.getElementById('ancho').value = '';
+      document.getElementById('alto').value = '';
+      document.getElementById('cantidad').value = '1';
+      document.getElementById('descuento').value = '';
+
+      // Restaurar botón
+      const btnAgregar = document.getElementById('agregar');
+      btnAgregar.value = 'Agregar Producto';
+      btnAgregar.style.backgroundColor = ''; // Volver al color original
+
+      // Eliminar botón cancelar
+      const btnCancelar = document.getElementById('btnCancelar');
+      if (btnCancelar) {
+        btnCancelar.remove();
+      }
+
+      // Quitar resaltado
+      document.querySelectorAll('.table-row').forEach(r => r.classList.remove('editing'));
+
+      // Resetear tipo de trabajo
+      document.getElementById('tipoTrabajo').value = 'plano';
+      cambiarTipoTrabajo();
+    }
+
+    // Función para eliminar fila
+    function eliminarFila(button) {
+      if (confirm('¿Está seguro de que desea eliminar este producto?')) {
+        const row = button.closest('tr');
+        const index = Array.from(row.parentNode.children).indexOf(row);
+
+        // Si estamos editando esta fila, cancelar edición
+        if (editingRowIndex === index) {
+          cancelarEdicion();
+        }
+
+        row.remove();
+        currentItems.splice(index, 1);
+
+        // Ajustar índice de edición si es necesario
+        if (editingRowIndex > index) {
+          editingRowIndex--;
+        }
+
+        updateEmptyMessage();
+        updateTotal();
+        renumberRows();
+        showToast('Producto eliminado correctamente', 'success');
+      }
+    }
+
+    // Función para renumerar filas
+    function renumberRows() {
+      const rows = document.querySelectorAll('#miTabla tbody .table-row');
+      rows.forEach((row, index) => {
+        const itemCell = row.querySelector('.cell-item');
+        if (itemCell) {
+          itemCell.textContent = index + 1;
+        }
+      });
+    }
+
+    // Función para actualizar mensaje vacío
+    function updateEmptyMessage() {
+      const tbody = document.querySelector('#miTabla tbody');
+      const emptyMessage = document.getElementById('emptyMessage');
+      const showQuickButton = document.getElementById('showQuickButtons');
+
+      if (tbody.children.length === 0 || (tbody.children.length === 1 && emptyMessage)) {
+        if (!emptyMessage) {
+          tbody.innerHTML = `
+            <tr id="emptyMessage" class="table-empty-row">
+              <td colspan="9" class="px-6 py-12 text-center text-gray-500">
+                <div class="flex flex-col items-center">
+                  <svg class="w-12 h-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                  </svg>
+                  <p class="text-lg font-medium">No hay productos agregados</p>
+                  <p class="text-sm">Agregue productos usando el formulario de arriba</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+        // Ocultar botón de agregar rápido cuando no hay items
+        if (showQuickButton) {
+          showQuickButton.style.display = 'none';
+        }
+      } else if (emptyMessage) {
+        emptyMessage.remove();
+        // Mostrar botón de agregar rápido cuando hay items
+        if (showQuickButton) {
+          showQuickButton.style.display = 'inline-block';
+          showQuickButton.classList.add('pulse-attention');
+        }
+      }
+    }
+
+    // Función para actualizar total
+    function updateTotal() {
+      console.log('💰 Actualizando totales...');
+
+      const rows = document.querySelectorAll('#miTabla tbody .table-row');
+      let subtotal = 0;
+      let totalDiscounts = 0;
+
+      console.log(`📊 Encontradas ${rows.length} filas en tabla`);
+      console.log(`📦 Items en currentItems: ${currentItems.length}`);
+
+      // Usar currentItems como fuente principal de datos (más confiable)
+      if (currentItems.length > 0) {
+        currentItems.forEach((item, index) => {
+          const cost = parseFloat(item.totalCost || 0);
+          const labor = parseFloat(item.laborCost || 0);
+
+          if (!isNaN(cost)) subtotal += cost;
+          // NO sumar labor por separado porque ya está incluido en totalCost
+
+          console.log(`  Item ${index + 1}: S/ ${cost.toFixed(2)} (incluye labor: S/ ${labor.toFixed(2)})`);
+        });
+      } else {
+        // Fallback: usar datos de las filas si currentItems está vacío
+        rows.forEach((row, index) => {
+          const cost = parseFloat(row.dataset.totalCost || 0);
+          const labor = parseFloat(row.dataset.laborCost || 0);
+          const discount = parseFloat(row.dataset.discountAmount || 0);
+
+          if (!isNaN(cost)) subtotal += cost;
+          // NO sumar labor por separado porque ya está incluido en totalCost
+          if (!isNaN(discount)) totalDiscounts += discount;
+
+          console.log(`  Fila ${index + 1}: S/ ${cost.toFixed(2)} (incluye labor: S/ ${labor.toFixed(2)})`);
+        });
+      }
+
+      // IGV sobre el subtotal (mano de obra ya incluida en cada item)
+      const includeIGV = document.getElementById('includeIGV')?.checked || false;
+      const igvAmount = includeIGV ? subtotal * 0.18 : 0;
+
+      // Total final
+      const finalTotal = subtotal + igvAmount;
+
+      console.log(`💰 Cálculos finales:`);
+      console.log(`  Subtotal (material + mano obra incluida): S/ ${subtotal.toFixed(2)}`);
+      console.log(`  IGV: S/ ${igvAmount.toFixed(2)}`);
+      console.log(`  Total final: S/ ${finalTotal.toFixed(2)}`);
+
+      // Actualizar elementos en la interfaz
+      const subtotalEl = document.getElementById('subtotal');
+      const igvEl = document.getElementById('igv');
+      const totalEl = document.getElementById('total');
+      const totalDiscountEl = document.getElementById('totalDiscount');
+
+      if (subtotalEl) {
+        subtotalEl.textContent = `S/ ${subtotal.toFixed(2)}`;
+        console.log(`✅ Subtotal actualizado: ${subtotalEl.textContent}`);
+      }
+      if (igvEl) {
+        igvEl.textContent = `S/ ${igvAmount.toFixed(2)}`;
+        console.log(`✅ IGV actualizado: ${igvEl.textContent}`);
+      }
+      if (totalEl) totalEl.textContent = `S/ ${finalTotal.toFixed(2)}`;
+      if (totalDiscountEl) totalDiscountEl.textContent = `-S/ ${totalDiscounts.toFixed(2)}`;
+
+      console.log(`💰 RESUMEN FINAL: Subtotal: S/ ${subtotal.toFixed(2)} (incluye mano obra), IGV: S/ ${igvAmount.toFixed(2)}, TOTAL: S/ ${finalTotal.toFixed(2)}`);
+
+      // Actualizar desglose de costos si está visible
+      const showCosts = document.getElementById('showRealCosts')?.checked;
+      if (showCosts) {
+        updateCostBreakdown();
+      }
+    }
+
+    // Función para limpiar todo
+    function clearAll() {
+      if (confirm('¿Está seguro de que desea limpiar todos los datos?')) {
+        document.querySelector('#miTabla tbody').innerHTML = '';
+        currentItems = [];
+        itemCounter = 1;
+
+        // Limpiar datos del cliente
+        document.getElementById('clientName').value = '';
+        document.getElementById('clientPhone').value = '';
+        document.getElementById('clientEmail').value = '';
+        document.getElementById('clientRuc').value = '';
+
+        updateEmptyMessage();
+        updateTotal();
+        showToast('Todos los datos han sido limpiados', 'info');
+      }
+    }
+
+    // Función para calcular cinta reflectiva
+    function calcular() {
+      const rectangles = parseInt(document.getElementById("rectangulos").value);
+
+      if (isNaN(rectangles) || rectangles <= 0) {
+        showToast("Por favor ingresa una cantidad válida de rectángulos", 'warning');
+        return;
+      }
+
+      const RECTANGLE_LENGTH = 0.15;
+      const PRICE_PER_RECTANGLE = 2.25;
+
+      const totalMeters = rectangles * RECTANGLE_LENGTH;
+      const totalPrice = rectangles * PRICE_PER_RECTANGLE;
+
+      document.getElementById("precio").textContent = totalPrice.toFixed(2);
+      document.getElementById("metros").textContent = totalMeters.toFixed(2);
+      document.getElementById("resultado").classList.remove("hidden");
+      showToast(`Calculado: ${rectangles} rectángulos = S/ ${totalPrice.toFixed(2)}`, 'success');
+    }
+
+    // Función para obtener datos del cliente (con fallback referencial)
+    function getClientData() {
+      let clientName = document.getElementById('clientName').value.trim();
+      let clientPhone = document.getElementById('clientPhone').value.trim();
+      const clientEmail = document.getElementById('clientEmail').value.trim();
+      const clientRuc = document.getElementById('clientRuc').value.trim();
+
+      // Si no hay datos del cliente, usar datos referenciales
+      if (!clientName && !clientPhone) {
+        const fechaHoy = new Date().toLocaleDateString();
+        const horaActual = new Date().toLocaleTimeString();
+        clientName = 'Cliente Referencial';
+        clientPhone = `Cotización del ${fechaHoy} - ${horaActual}`;
+      }
+
+      return {
+        name: clientName,
+        phone: clientPhone,
+        email: clientEmail,
+        ruc: clientRuc,
+        isReferencial: (!document.getElementById('clientName').value.trim() && !document.getElementById('clientPhone').value.trim())
+      };
+    }
+
+    // Función para generar cotización
+    function generateQuote() {
+      if (currentItems.length === 0) {
+        showToast('Debe agregar al menos un producto para generar la cotización', 'warning');
+        return;
+      }
+
+      const clientData = getClientData();
+      const total = currentItems.reduce((sum, item) => sum + item.totalCost, 0);
+
+      if (clientData.isReferencial) {
+        showToast(`📋 Cotización Referencial: ${currentItems.length} productos - S/ ${total.toFixed(2)}`, 'info');
+        alert(`📋 COTIZACIÓN REFERENCIAL\n\n` +
+          `Productos: ${currentItems.length}\n` +
+          `Total: S/ ${total.toFixed(2)}\n\n` +
+          `⚠️ Esta es una cotización referencial.\n` +
+          `Para una cotización formal, complete los datos del cliente.`);
+      } else {
+        showToast(`📋 Cotización generada para ${clientData.name}`, 'success');
+        alert(`📋 COTIZACIÓN GENERADA\n\n` +
+          `Cliente: ${clientData.name}\n` +
+          `Teléfono: ${clientData.phone}\n` +
+          `Productos: ${currentItems.length}\n` +
+          `Total: S/ ${total.toFixed(2)}`);
+      }
+    }
+
+    function saveQuote() {
+      if (currentItems.length === 0) {
+        showToast('No hay productos para guardar', 'warning');
+        return;
+      }
+
+      const clientData = getClientData();
+      const total = currentItems.reduce((sum, item) => sum + item.totalCost, 0);
+
+      // Simular guardado (aquí podrías enviar a un servidor)
+      const quoteNumber = `COT-${new Date().getFullYear()}-${String(Date.now()).slice(-4)}`;
+
+      if (clientData.isReferencial) {
+        showToast(`💾 Cotización Referencial ${quoteNumber} guardada`, 'info');
+      } else {
+        showToast(`💾 Cotización ${quoteNumber} guardada para ${clientData.name}`, 'success');
+      }
+    }
+
+    function loadQuotes() {
+      // Simular carga de cotizaciones guardadas
+      const savedQuotes = [
+        { number: 'COT-2025-0001', client: 'Juan Pérez', total: 450.00, date: '2025-01-15' },
+        { number: 'COT-2025-0002', client: 'María García', total: 320.50, date: '2025-01-14' },
+        { number: 'COT-2025-0003', client: 'Cliente Referencial', total: 180.00, date: '2025-01-13' }
+      ];
+
+      let quotesList = '📋 COTIZACIONES GUARDADAS\n\n';
+      savedQuotes.forEach(quote => {
+        quotesList += `${quote.number}\n`;
+        quotesList += `Cliente: ${quote.client}\n`;
+        quotesList += `Total: S/ ${quote.total.toFixed(2)}\n`;
+        quotesList += `Fecha: ${quote.date}\n\n`;
+      });
+
+      alert(quotesList);
+      showToast(`📋 Mostrando ${savedQuotes.length} cotizaciones guardadas`, 'info');
+    }
+
+    // Función para mostrar/ocultar costos reales (solo tabla)
+    function toggleCostDisplay() {
+      const showCosts = document.getElementById('showRealCosts').checked;
+      console.log(`🔄 TOGGLE COSTOS REALES - Estado: ${showCosts}`);
+
+      // Mostrar/ocultar columna de costos reales en tabla
+      const header = document.getElementById('costRealHeader');
+      const costCells = document.querySelectorAll('.cost-real-cell');
+      const costBreakdown = document.getElementById('costBreakdown');
+
+      if (showCosts) {
+        if (header) header.style.display = 'table-cell';
+        costCells.forEach(cell => cell.style.display = 'table-cell');
+        if (costBreakdown) costBreakdown.style.display = 'block';
+        setTimeout(() => updateCostBreakdown(), 100);
+        console.log(`✅ Columna de costos reales mostrada (${costCells.length} celdas)`);
+      } else {
+        if (header) header.style.display = 'none';
+        costCells.forEach(cell => cell.style.display = 'none');
+        if (costBreakdown) costBreakdown.style.display = 'none';
+        console.log(`❌ Columna de costos reales ocultada`);
+      }
+
+      // Toast informativo
+      showToast(
+        showCosts ?
+          '🔍 Costos reales mostrados - Transparencia comercial activada' :
+          '👁️ Costos reales ocultados - Vista cliente activada',
+        'info'
+      );
+    }
+
+    // Función para actualizar solo las secciones de costos reales
+    function updateMobileRealCosts() {
+      const showRealCosts = document.getElementById('showRealCosts')?.checked || false;
+      console.log(`🔄 Actualizando secciones de costos reales en mobile: ${showRealCosts}`);
+
+      const mobileCards = document.querySelectorAll('.mobile-card');
+      console.log(`📱 Cards encontradas: ${mobileCards.length}`);
+
+      mobileCards.forEach((card, index) => {
+        const itemId = card.dataset.itemId;
+        const item = currentItems.find(i => i.id == itemId);
+
+        if (item) {
+          const material = materials.find(m => {
+            const cleanItemName = item.materialName.replace(/^[^a-zA-Z]*\s*/, '').split(' - ')[0];
+            return m.name === cleanItemName || m.name.includes(cleanItemName);
+          });
+
+          if (material) {
+            const calculation = calculateMaterialCost(
+              item.width, item.height, material, item.quantity,
+              item.discount, item.tipoTrabajo, item.extras
+            );
+
+            // Buscar sección existente de costos reales
+            let realCostSection = card.querySelector('.mobile-real-cost');
+
+            if (showRealCosts) {
+              // Crear o actualizar sección de costos reales
+              const newRealCostHTML = `
+                <div class="mobile-real-cost bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-3 mt-3 border border-green-200 shadow-sm">
+                  <div class="text-sm">
+                    <div class="flex justify-between items-center mb-2">
+                      <span class="font-semibold text-green-700">
+                        <i class="fas fa-eye text-green-500 mr-1"></i>Transparencia Comercial
+                      </span>
+                      <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">
+                        COSTOS REALES
+                      </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                      <div class="bg-white rounded p-2">
+                        <div class="text-gray-600">Costo Real:</div>
+                        <div class="font-bold text-green-700">S/ ${calculation.realUnitCost ? calculation.realUnitCost.toFixed(2) : '0.00'}</div>
+                      </div>
+                      <div class="bg-white rounded p-2">
+                        <div class="text-gray-600">Ganancia:</div>
+                        <div class="font-bold text-blue-700">${calculation.marginPercentage ? calculation.marginPercentage.toFixed(1) : '0'}%</div>
+                      </div>
+                    </div>
+                    
+                    <div class="text-xs text-gray-600 mt-2 flex items-center justify-between">
+                      <span>
+                        <i class="fas fa-ruler-combined text-blue-400 mr-1"></i>
+                        ${material.width || material.ancho}cm × ${material.length || material.largo}m
+                      </span>
+                      ${material.origen ? `
+                        <span>
+                          <i class="fas fa-globe text-purple-400 mr-1"></i>${material.origen}
+                        </span>
+                      ` : ''}
+                    </div>
+                  </div>
+                </div>
+              `;
+
+              if (realCostSection) {
+                realCostSection.outerHTML = newRealCostHTML;
+              } else {
+                // Insertar después del primer div (info principal)
+                const mainInfo = card.querySelector('.flex.justify-between.items-start');
+                if (mainInfo) {
+                  mainInfo.insertAdjacentHTML('afterend', newRealCostHTML);
+                }
+              }
+              console.log(`✅ Sección de costos reales agregada a card ${index + 1}`);
+
+            } else {
+              // Ocultar/eliminar sección de costos reales
+              if (realCostSection) {
+                realCostSection.remove();
+                console.log(`❌ Sección de costos reales eliminada de card ${index + 1}`);
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Función para regenerar cards mobile
+    function regenerateMobileCards() {
+      const mobileCards = document.getElementById('mobileCards');
+      const emptyMessageMobile = document.getElementById('emptyMessageMobile');
+
+      if (!mobileCards) {
+        console.log('❌ No se encontró contenedor de cards mobile');
+        return;
+      }
+
+      if (!emptyMessageMobile) {
+        console.log('❌ No se encontró mensaje vacío mobile');
+        return;
+      }
+
+      console.log(`🔄 Regenerando ${currentItems.length} cards mobile...`);
+      mobileCards.innerHTML = '';
+
+      if (currentItems.length === 0) {
+        emptyMessageMobile.style.display = 'block';
+        return;
+      }
+
+      emptyMessageMobile.style.display = 'none';
+
+      currentItems.forEach((item, index) => {
+        console.log(`📱 Regenerando card ${index + 1}: ${item.materialName}`);
+
+        const material = materials.find(m => {
+          const cleanItemName = item.materialName.replace(/^[^a-zA-Z]*\s*/, '').split(' - ')[0];
+          return m.name === cleanItemName || m.name.includes(cleanItemName);
+        });
+
+        if (material) {
+          const calculation = calculateMaterialCost(
+            item.width,
+            item.height,
+            material,
+            item.quantity,
+            item.discount,
+            item.tipoTrabajo,
+            item.extras
+          );
+          generateMobileCard(item, calculation, material);
+          console.log(`✅ Card ${index + 1} regenerada`);
+        } else {
+          console.log(`❌ Material no encontrado para card ${index + 1}: ${item.materialName}`);
+        }
+      });
+
+      console.log(`✅ ${currentItems.length} cards mobile regeneradas`);
+    }
+
+    // Función para actualizar desglose de costos
+    function updateCostBreakdown() {
+      console.log('🔍 Actualizando breakdown de costos...');
+
+      if (currentItems.length === 0) {
+        console.log('❌ No hay items para calcular breakdown');
+        return;
+      }
+
+      // 🇵🇪 CALCULAR COSTOS REALES Y GANANCIAS (Sistema Peruano)
+      let realMaterialCosts = 0;
+      let totalMarginAmount = 0;
+
+      currentItems.forEach((item, index) => {
+        console.log(`📦 Procesando item ${index + 1}: ${item.materialName}`);
+
+        const material = materials.find(m => {
+          const cleanItemName = item.materialName.replace(/^[^a-zA-Z]*\s*/, '').split(' - ')[0];
+          return m.name === cleanItemName || m.name.includes(cleanItemName);
+        });
+
+        if (material) {
+          // Recalcular con las dimensiones exactas del item
+          const calculation = calculateMaterialCost(
+            item.width,
+            item.height,
+            material,
+            item.quantity,
+            item.discount,
+            item.tipoTrabajo,
+            item.extras
+          );
+
+          // Costo real SOLO del material (sin mano de obra)
+          const realMaterialCostThisItem = calculation.realUnitCost || 0;
+          const saleMaterialCostThisItem = calculation.unitCost || 0;
+
+          // La ganancia del material es la diferencia entre precio de venta del material y costo real
+          const materialMarginThisItem = saleMaterialCostThisItem - realMaterialCostThisItem;
+
+          realMaterialCosts += realMaterialCostThisItem;
+          totalMarginAmount += materialMarginThisItem;
+
+          console.log(`  💰 Item ${index + 1}: Costo material S/ ${realMaterialCostThisItem.toFixed(2)}, Venta material S/ ${saleMaterialCostThisItem.toFixed(2)}, Margen S/ ${materialMarginThisItem.toFixed(2)}`);
+        } else {
+          console.log(`  ❌ Material no encontrado para: ${item.materialName}`);
+        }
+      });
+
+      // Calcular porcentaje de ganancia real sobre las dimensiones
+      const marginPercentage = realMaterialCosts > 0 ? (totalMarginAmount / realMaterialCosts * 100) : 0;
+
+      console.log(`📊 Totales SOLO MATERIAL - Costo real: S/ ${realMaterialCosts.toFixed(2)}, Ganancia material: S/ ${totalMarginAmount.toFixed(2)} (${marginPercentage.toFixed(1)}%)`);
+
+      // Actualizar elementos sin interferir con updateTotal
+      const materialCostsEl = document.getElementById('materialCosts');
+      const estimatedProfitEl = document.getElementById('estimatedProfit');
+
+      if (materialCostsEl) {
+        materialCostsEl.textContent = `S/ ${realMaterialCosts.toFixed(2)}`;
+      }
+
+      if (estimatedProfitEl) {
+        estimatedProfitEl.textContent = `S/ ${totalMarginAmount.toFixed(2)} (${marginPercentage.toFixed(1)}%)`;
+      }
+    }
+
+    function exportToPDF() {
+      if (currentItems.length === 0) {
+        showToast('No hay productos para exportar', 'warning');
+        return;
+      }
+
+      const clientData = getClientData();
+      const total = currentItems.reduce((sum, item) => sum + item.totalCost, 0);
+
+      // Simular exportación PDF
+      if (clientData.isReferencial) {
+        showToast('📄 Exportando cotización referencial...', 'info');
+        setTimeout(() => {
+          showToast('✅ Cotización referencial lista para imprimir', 'success');
+        }, 1500);
+      } else {
+        showToast(`📄 Exportando cotización para ${clientData.name}...`, 'info');
+        setTimeout(() => {
+          showToast('✅ PDF generado exitosamente', 'success');
+        }, 1500);
+      }
+    }
+
+    // ===== FUNCIONES PARA BOTONES RÁPIDOS =====
+
+    // Configuración de materiales rápidos
+    const quickMaterials = {
+      capo: {
+        name: 'Vinil Capó',
+        width: 120,
+        height: 80,
+        price: 80,
+        material: 'Vinil Panorámico'
+      },
+      espejos: {
+        name: 'Cromados Espejos',
+        width: 20,
+        height: 15,
+        quantity: 4,
+        price: 60,
+        material: 'Vinil Cromado'
+      },
+      cromados: {
+        name: 'Cromados Varios',
+        width: 30,
+        height: 20,
+        price: 40,
+        material: 'Vinil Cromado'
+      },
+      fibra: {
+        name: 'Fibra Carbono',
+        width: 100,
+        height: 50,
+        price: 120,
+        material: 'Fibra de Carbono 3D'
+      },
+      techo: {
+        name: 'Techo Panorámico',
+        width: 200,
+        height: 100,
+        price: 200,
+        material: 'Vinil Panorámico'
+      }
+    };
+
+    // Función para mostrar/ocultar botones rápidos
+    function toggleQuickButtons() {
+      const quickButtons = document.getElementById('quickAddButtons');
+      const showButton = document.getElementById('showQuickButtons');
+
+      if (quickButtons.style.display === 'none' || quickButtons.style.display === '') {
+        quickButtons.style.display = 'block';
+        quickButtons.classList.add('show');
+        showButton.innerHTML = '<i class="fas fa-times mr-2"></i>Ocultar Agregar Rápido';
+        showButton.classList.add('pulse-attention');
+      } else {
+        quickButtons.classList.remove('show');
+        quickButtons.classList.add('hide');
+        setTimeout(() => {
+          quickButtons.style.display = 'none';
+          quickButtons.classList.remove('hide');
+        }, 300);
+        showButton.innerHTML = '<i class="fas fa-bolt mr-2"></i>Mostrar Agregar Rápido';
+        showButton.classList.remove('pulse-attention');
+      }
+    }
+
+    // Función para agregar item rápido
+    function addQuickItem(type) {
+      console.log(`🔥 Agregando item rápido: ${type}`);
+
+      if (type === 'otro') {
+        // Para "otro", abrir modal de trabajo personalizado
+        showCustomWorkModal();
+        return;
+      }
+
+      const quickItem = quickMaterials[type];
+      if (!quickItem) {
+        showToast('Tipo de material no encontrado', 'error');
+        return;
+      }
+
+      // Buscar el material en la lista (usar el primer material compatible)
+      let material;
+      if (type === 'capo' || type === 'techo') {
+        material = materials.find(m => m.name.includes('Vinil Panorámico')) || materials[12]; // Vinil Panorámico
+      } else if (type === 'espejos' || type === 'cromados') {
+        material = materials.find(m => m.name.includes('Cromado')) || materials[3]; // Vinil Cromado
+      } else if (type === 'fibra') {
+        material = materials.find(m => m.name.includes('Fibra de Carbono')) || materials[9]; // Fibra de Carbono 3D
+      } else {
+        material = materials[0]; // Material por defecto
+      }
+
+      if (!material) {
+        showToast(`Material "${quickItem.material}" no encontrado en la base de datos`, 'error');
+        return;
+      }
+
+      // Obtener modalidad de venta actual
+      const modalidadVenta = document.querySelector('input[name="modalidadVenta"]:checked')?.value || 'solo_material';
+
+      // Calcular el costo usando la función existente
+      const calculation = calculateMaterialCost(
+        quickItem.width,
+        quickItem.height,
+        material,
+        quickItem.quantity || 1,
+        0, // sin descuento inicial
+        'plano', // tipo de trabajo por defecto
+        {} // sin extras
+      );
+
+      // Crear objeto del item
+      const itemData = {
+        id: Date.now(), // ID único
+        materialName: quickItem.name,
+        width: quickItem.width,
+        height: quickItem.height,
+        quantity: quickItem.quantity || 1,
+        area: (quickItem.width * quickItem.height * (quickItem.quantity || 1)) / 10000,
+        unitCost: calculation.unitCost,
+        discount: 0,
+        subtotal: calculation.totalCost,
+        tipoTrabajo: 'plano',
+        totalCost: calculation.totalCost,
+        laborCost: calculation.laborCost || 0,
+        extras: {}
+      };
+
+      // Agregar a la lista
+      currentItems.push(itemData);
+
+      // Agregar fila a la tabla
+      addRowToTable(itemData, material, calculation);
+
+      // Actualizar totales
+      updateTotal();
+
+      // Mostrar mensaje de éxito
+      showToast(`✅ ${quickItem.name} agregado - S/${calculation.totalCost.toFixed(2)}`, 'success');
+
+      // Aplicar descuento automático si hay múltiples items
+      applyAutomaticDiscount();
+
+      console.log(`✅ Item rápido agregado:`, itemData);
+    }
+
+    // Función para agregar fila a la tabla (reutilizada del código existente)
+    function addRowToTable(itemData, material, calculation) {
+      const tbody = document.querySelector('#miTabla tbody');
+      const newRow = tbody.insertRow();
+      newRow.className = 'table-row table-row-new';
+
+      // Determinar tipo de trabajo para el icono
+      const tipoIcon = itemData.tipoTrabajo === 'forrado' ? '🚗' :
+        itemData.tipoTrabajo === 'parcial' ? '📐' : '📏';
+      const descripcionTrabajo = itemData.tipoTrabajo === 'forrado' ? 'Forrado completo' :
+        itemData.tipoTrabajo === 'parcial' ? 'Aplicación parcial' : 'Aplicación plana';
+
+      newRow.innerHTML = `
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-center">
+          <div class="cell-item">${currentItems.length}</div>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3">
+          <div class="cell-material">
+            <span class="font-semibold text-naranja">${itemData.materialName}</span>
+            <span class="block text-xs text-gray-600 mt-1">
+              ${tipoIcon} ${descripcionTrabajo}
+            </span>
+            ${calculation.laborCost > 0 ? `<br><small class="text-blue-600"><i class="fas fa-tools mr-1"></i>+ Mano obra: S/ ${calculation.laborCost.toFixed(2)}</small>` : ''}
+            ${material.codigo ? `<br><small class="text-gray-500">${material.codigo}</small>` : ''}
+          </div>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-center">
+          <div class="cell-dimensions">${itemData.width} × ${itemData.height} cm</div>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-center">
+          <div class="cell-quantity">${itemData.quantity}</div>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-center timer-start-cell">
+          <div class="text-xs text-gray-500" id="startTime-${itemData.id}">--:--</div>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-center timer-duration-cell">
+          <div class="text-xs font-mono" id="duration-${itemData.id}">00:00:00</div>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-center timer-control-cell">
+          <button onclick="toggleTimer('${itemData.id}')" id="timerBtn-${itemData.id}" class="timer-btn timer-btn-start bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs transition">
+            <i class="fas fa-play"></i>
+          </button>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-center cost-real-cell" style="display: none;">
+          <div class="cell-area">S/ ${calculation.realUnitCost?.toFixed(2) || '0.00'}</div>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-center">
+          <div class="cell-area area-indicator">${itemData.area.toFixed(4)} m²</div>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-right">
+          <div class="cell-price number-animate">S/ ${itemData.unitCost.toFixed(2)}</div>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-center">
+          <div class="cell-discount ${itemData.discount > 0 ? 'has-discount' : 'no-discount'}">
+            ${itemData.discount > 0 ? `${itemData.discount}%` : '—'}
+          </div>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-right">
+          <div class="cell-subtotal">S/ ${itemData.subtotal.toFixed(2)}</div>
+        </td>
+        <td class="px-2 sm:px-4 py-2 sm:py-3 text-center">
+          <div class="flex gap-1 justify-center">
+            <button onclick="editarFila(${currentItems.length - 1})" class="btn-editar bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button onclick="eliminarFila(${currentItems.length - 1})" class="btn-eliminar">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      `;
+
+      // Guardar datos en el dataset de la fila
+      newRow.dataset.itemId = itemData.id;
+      newRow.dataset.totalCost = calculation.totalCost;
+      newRow.dataset.laborCost = calculation.laborCost || 0;
+      newRow.dataset.discountAmount = calculation.discountAmount || 0;
+
+      // Inicializar cronómetro para este item
+      initializeTimer(itemData.id);
+
+      // Ocultar mensaje vacío
+      updateEmptyMessage();
+    }
+
+    // Función para aplicar descuento automático por volumen
+    function applyAutomaticDiscount() {
+      const itemCount = currentItems.length;
+      let discountPercentage = 0;
+
+      // Descuentos por cantidad de items
+      if (itemCount >= 5) {
+        discountPercentage = 15;
+      } else if (itemCount >= 3) {
+        discountPercentage = 10;
+      } else if (itemCount >= 2) {
+        discountPercentage = 5;
+      }
+
+      if (discountPercentage > 0) {
+        // Aplicar descuento al último item agregado
+        const lastItem = currentItems[currentItems.length - 1];
+        if (lastItem.discount === 0) { // Solo si no tiene descuento ya
+          lastItem.discount = discountPercentage;
+          lastItem.subtotal = lastItem.totalCost * (1 - discountPercentage / 100);
+
+          // Actualizar la fila en la tabla
+          updateRowDisplay(currentItems.length - 1);
+
+          showToast(`🎁 Descuento automático aplicado: ${discountPercentage}%`, 'success');
+        }
+      }
+    }
+
+    // Función para actualizar la visualización de una fila
+    function updateRowDisplay(index) {
+      const rows = document.querySelectorAll('#miTabla tbody .table-row');
+      const row = rows[index];
+      const item = currentItems[index];
+
+      if (row && item) {
+        // Actualizar celda de descuento
+        const discountCell = row.querySelector('.cell-discount');
+        if (discountCell) {
+          discountCell.className = `cell-discount ${item.discount > 0 ? 'has-discount' : 'no-discount'}`;
+          discountCell.textContent = item.discount > 0 ? `${item.discount}%` : '—';
+        }
+
+        // Actualizar celda de subtotal
+        const subtotalCell = row.querySelector('.cell-subtotal');
+        if (subtotalCell) {
+          subtotalCell.textContent = `S/ ${item.subtotal.toFixed(2)}`;
+        }
+      }
+    }
+
+    // Mostrar botones rápidos automáticamente cuando hay items
+    function checkShowQuickButtons() {
+      const quickButtons = document.getElementById('quickAddButtons');
+      const showButton = document.getElementById('showQuickButtons');
+
+      if (currentItems.length > 0 && quickButtons.style.display === 'none') {
+        showButton.classList.add('pulse-attention');
+      }
+    }
+
+    // Llamar a checkShowQuickButtons cuando se actualicen los totales
+    const originalUpdateTotal = updateTotal;
+    updateTotal = function () {
+      originalUpdateTotal();
+      checkShowQuickButtons();
+    };
+
+    // ===== FUNCIONES DE CRONÓMETROS =====
+
+    // Inicializar cronómetro para un item (simplificado)
+    function initializeTimer(itemId) {
+      timerManager.timers[itemId] = {
+        state: TIMER_STATES.PENDING,
+        startTime: null,
+        endTime: null,
+        duration: 0
+      };
+
+      console.log(`⏱️ Cronómetro listo para item ${itemId}`);
+    }
+
+    // Función principal para controlar cronómetros (simplificada)
+    function toggleTimer(itemId) {
+      const timer = timerManager.timers[itemId];
+      if (!timer) {
+        console.error(`❌ Timer no encontrado para item ${itemId}`);
+        return;
+      }
+
+      switch (timer.state) {
+        case TIMER_STATES.PENDING:
+          startTimer(itemId);
+          break;
+        case TIMER_STATES.ACTIVE:
+          stopTimer(itemId);
+          break;
+        case TIMER_STATES.COMPLETED:
+          showToast('✅ Este trabajo ya está completado', 'info');
+          break;
+      }
+    }
+
+    // Iniciar cronómetro (simplificado)
+    function startTimer(itemId) {
+      // Solo permitir un cronómetro activo a la vez
+      if (timerManager.activeTimer && timerManager.activeTimer !== itemId) {
+        showToast('⚠️ Termina el trabajo actual primero', 'warning');
+        return;
+      }
+
+      const timer = timerManager.timers[itemId];
+      const now = new Date();
+
+      timer.state = TIMER_STATES.ACTIVE;
+      timer.startTime = now;
+      timerManager.activeTimer = itemId;
+
+      // Actualizar UI
+      updateTimerButton(itemId, 'stop');
+      updateStartTimeDisplay(itemId, now);
+
+      // Iniciar intervalo de actualización
+      timerManager.intervals[itemId] = setInterval(() => {
+        updateDurationDisplay(itemId);
+      }, 1000);
+
+      // Deshabilitar otros botones de inicio
+      disableOtherTimerButtons(itemId);
+
+      showToast(`▶️ Iniciado: ${getItemName(itemId)}`, 'success');
+      console.log(`▶️ Timer iniciado para item ${itemId} a las ${now.toLocaleTimeString()}`);
+    }
+
+    // Detener cronómetro (simplificado)
+    function stopTimer(itemId) {
+      const timer = timerManager.timers[itemId];
+      const now = new Date();
+
+      timer.state = TIMER_STATES.COMPLETED;
+      timer.endTime = now;
+      timerManager.activeTimer = null;
+
+      // Calcular duración total (sin pausas complicadas)
+      const totalDuration = now.getTime() - timer.startTime.getTime();
+      timer.duration = totalDuration;
+
+      // Limpiar intervalo
+      if (timerManager.intervals[itemId]) {
+        clearInterval(timerManager.intervals[itemId]);
+        delete timerManager.intervals[itemId];
+      }
+
+      // Actualizar UI
+      updateTimerButton(itemId, 'completed');
+      updateDurationDisplay(itemId, true);
+
+      // Habilitar otros botones
+      enableAllTimerButtons();
+
+      const durationText = formatDuration(totalDuration);
+      showToast(`✅ Completado: ${getItemName(itemId)} (${durationText})`, 'success');
+      console.log(`⏹️ Timer detenido para item ${itemId}. Duración: ${durationText}`);
+
+      // Verificar si todos los trabajos están completados
+      checkAllWorkCompleted();
+    }
+
+    // Funciones de pausa eliminadas - Solo inicio y fin para simplicidad
+
+    // Actualizar botón del cronómetro (simplificado)
+    function updateTimerButton(itemId, action) {
+      const btn = document.getElementById(`timerBtn-${itemId}`);
+      if (!btn) return;
+
+      btn.className = 'timer-btn px-3 py-2 rounded-lg text-sm font-medium transition shadow-md';
+
+      switch (action) {
+        case 'stop':
+          btn.className += ' timer-btn-stop bg-red-500 hover:bg-red-600 text-white';
+          btn.innerHTML = '<i class="fas fa-stop mr-1"></i>Terminar';
+          btn.title = 'Terminar trabajo';
+          break;
+        case 'completed':
+          btn.className += ' timer-btn-completed bg-green-500 text-white cursor-default';
+          btn.innerHTML = '<i class="fas fa-check mr-1"></i>Listo';
+          btn.title = 'Trabajo completado';
+          btn.disabled = true;
+          break;
+        default: // start
+          btn.className += ' timer-btn-start bg-blue-500 hover:bg-blue-600 text-white';
+          btn.innerHTML = '<i class="fas fa-play mr-1"></i>Iniciar';
+          btn.title = 'Iniciar trabajo';
+          break;
+      }
+    }
+
+    // Actualizar display de hora de inicio
+    function updateStartTimeDisplay(itemId, startTime) {
+      const display = document.getElementById(`startTime-${itemId}`);
+      if (display && startTime) {
+        display.textContent = startTime.toLocaleTimeString('es-PE', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        display.className = 'text-xs text-green-600 font-medium';
+      }
+    }
+
+    // Actualizar display de duración (simplificado)
+    function updateDurationDisplay(itemId, isFinal = false) {
+      const timer = timerManager.timers[itemId];
+      const display = document.getElementById(`duration-${itemId}`);
+
+      if (!display || !timer.startTime) return;
+
+      let duration;
+      if (isFinal && timer.duration) {
+        duration = timer.duration;
+      } else {
+        const now = new Date();
+        duration = now.getTime() - timer.startTime.getTime();
+      }
+
+      const formatted = formatDuration(duration);
+      display.textContent = formatted;
+
+      if (isFinal) {
+        display.className = 'text-sm font-mono text-green-600 font-bold bg-green-50 px-2 py-1 rounded';
+      } else {
+        display.className = 'text-sm font-mono text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded animate-pulse';
+      }
+    }
+
+    // Formatear duración en HH:MM:SS
+    function formatDuration(milliseconds) {
+      const totalSeconds = Math.floor(milliseconds / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // Deshabilitar otros botones de cronómetro (simplificado)
+    function disableOtherTimerButtons(activeItemId) {
+      Object.keys(timerManager.timers).forEach(itemId => {
+        if (itemId !== activeItemId) {
+          const btn = document.getElementById(`timerBtn-${itemId}`);
+          if (btn && timerManager.timers[itemId].state === TIMER_STATES.PENDING) {
+            btn.disabled = true;
+            btn.className += ' opacity-50';
+            btn.innerHTML = '<i class="fas fa-clock mr-1"></i>Espera';
+          }
+        }
+      });
+    }
+
+    // Habilitar todos los botones de cronómetro (simplificado)
+    function enableAllTimerButtons() {
+      Object.keys(timerManager.timers).forEach(itemId => {
+        const btn = document.getElementById(`timerBtn-${itemId}`);
+        if (btn && timerManager.timers[itemId].state === TIMER_STATES.PENDING) {
+          btn.disabled = false;
+          btn.className = btn.className.replace(' opacity-50', '');
+          updateTimerButton(itemId, 'start');
+        }
+      });
+    }
+
+    // Obtener nombre del item
+    function getItemName(itemId) {
+      const item = currentItems.find(item => item.id == itemId);
+      return item ? item.materialName : `Item ${itemId}`;
+    }
+
+    // (Función checkAllWorkCompleted movida más abajo con funcionalidad de ticket)
+
+    // Limpiar cronómetros al limpiar todo
+    const originalClearAll = clearAll;
+    clearAll = function () {
+      // Limpiar todos los intervalos
+      Object.values(timerManager.intervals).forEach(intervalId => {
+        clearInterval(intervalId);
+      });
+
+      // Resetear timerManager
+      timerManager = {
+        activeTimer: null,
+        timers: {},
+        intervals: {}
+      };
+
+      // Ocultar botón de ticket
+      document.getElementById('generateTicketBtn').style.display = 'none';
+
+      // Llamar función original
+      originalClearAll();
+    };
+
+    // ===== FUNCIONES DE TICKET TÉRMICO VIRTUAL =====
+
+    // Verificar si todos los trabajos están completados y mostrar botón de ticket
+    function checkAllWorkCompleted() {
+      const allCompleted = Object.values(timerManager.timers).every(timer =>
+        timer.state === TIMER_STATES.COMPLETED
+      );
+
+      const ticketBtn = document.getElementById('generateTicketBtn');
+
+      if (allCompleted && Object.keys(timerManager.timers).length > 0) {
+        // Mostrar botón de ticket
+        ticketBtn.style.display = 'block';
+        ticketBtn.classList.add('pulse-attention');
+
+        setTimeout(() => {
+          showToast('🎉 ¡Todos los trabajos completados! Puedes generar el ticket ahora', 'success', 5000);
+        }, 1000);
+      } else {
+        // Ocultar botón de ticket
+        ticketBtn.style.display = 'none';
+        ticketBtn.classList.remove('pulse-attention');
+      }
+    }
+
+    // Mostrar modal de opciones de ticket
+    function showTicketOptions() {
+      // Generar resumen del trabajo
+      generateWorkSummary();
+
+      // Mostrar modal
+      document.getElementById('modalTicket').classList.remove('hidden');
+    }
+
+    // Cerrar modal de ticket
+    function closeTicketModal() {
+      document.getElementById('modalTicket').classList.add('hidden');
+    }
+
+    // Generar resumen del trabajo para el modal (simplificado)
+    function generateWorkSummary() {
+      const summaryContainer = document.getElementById('ticketWorkSummary');
+
+      let totalTime = 0;
+      let completedWorks = 0;
+
+      Object.values(timerManager.timers).forEach(timer => {
+        if (timer.state === TIMER_STATES.COMPLETED) {
+          totalTime += timer.duration;
+          completedWorks++;
+        }
+      });
+
+      const totalTimeFormatted = formatDuration(totalTime);
+      const totalAmount = document.getElementById('total').textContent;
+      const clientName = document.getElementById('clientName').value || 'Cliente';
+
+      summaryContainer.innerHTML = `
+        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+          <div class="text-2xl font-bold">${completedWorks}</div>
+          <div class="text-sm opacity-90">Trabajos</div>
+        </div>
+        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+          <div class="text-2xl font-bold">${totalTimeFormatted}</div>
+          <div class="text-sm opacity-90">Tiempo Total</div>
+        </div>
+        <div class="bg-white bg-opacity-20 rounded-lg p-4">
+          <div class="text-2xl font-bold">${totalAmount}</div>
+          <div class="text-sm opacity-90">Total a Cobrar</div>
+        </div>
+      `;
+    }
+
+    // Generar ticket según el método seleccionado (simplificado)
+    function generateTicket(method) {
+      console.log(`🧾 Generando boleta por: ${method}`);
+
+      // Mostrar loading
+      showToast('⏳ Generando boleta electrónica...', 'info', 2000);
+
+      const ticketData = generateTicketData();
+
+      setTimeout(() => {
+        switch (method) {
+          case 'whatsapp':
+            sendTicketWhatsApp(ticketData);
+            break;
+          case 'download':
+            downloadTicket(ticketData);
+            break;
+          case 'copy':
+            copyTicketText(ticketData);
+            break;
+          default:
+            showToast('❌ Método no disponible', 'error');
+            return;
+        }
+
+        closeTicketModal();
+      }, 1000);
+    }
+
+    // Generar datos del ticket
+    function generateTicketData() {
+      const clientName = document.getElementById('clientName').value || 'Cliente';
+      const clientPhone = document.getElementById('clientPhone').value || '';
+      const now = new Date();
+
+      // Calcular estadísticas de tiempo
+      let totalWorkTime = 0;
+      let earliestStart = null;
+      let latestEnd = null;
+
+      Object.values(timerManager.timers).forEach(timer => {
+        if (timer.state === TIMER_STATES.COMPLETED) {
+          totalWorkTime += timer.duration;
+
+          if (!earliestStart || timer.startTime < earliestStart) {
+            earliestStart = timer.startTime;
+          }
+
+          if (!latestEnd || timer.endTime > latestEnd) {
+            latestEnd = timer.endTime;
+          }
+        }
+      });
+
+      return {
+        // Datos del cliente
+        clientName,
+        clientPhone,
+
+        // Datos de la empresa (configurables)
+        companyName: document.getElementById('companyName')?.value || 'VINILES & DISEÑOS SAC',
+        companyRuc: document.getElementById('companyRuc')?.value || '20123456789',
+        companyAddress: document.getElementById('companyAddress')?.value || 'AV. AREQUIPA 1234 - LIMA',
+        companyPhone: '987-654-321',
+
+        // Datos del trabajo
+        items: currentItems,
+        subtotal: document.getElementById('subtotal').textContent,
+        discount: document.getElementById('totalDiscount').textContent,
+        igv: document.getElementById('igv').textContent,
+        total: document.getElementById('total').textContent,
+
+        // Datos de tiempo
+        startTime: earliestStart,
+        endTime: latestEnd,
+        totalWorkTime: formatDuration(totalWorkTime),
+
+        // Fecha y hora
+        date: now.toLocaleDateString('es-PE'),
+        time: now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }),
+
+        // Garantía
+        warranty: '12 meses'
+      };
+    }
+
+    // Generar texto del ticket como boleta electrónica (formato térmico real)
+    function generateTicketText(data) {
+      const now = new Date();
+      const ticketNumber = `B001-${String(Math.floor(Math.random() * 999999)).padStart(6, '0')}`;
+
+      // Función para centrar texto en ancho de ticket térmico (32 caracteres)
+      function centerText(text) {
+        const width = 32;
+        const padding = Math.max(0, Math.floor((width - text.length) / 2));
+        return ' '.repeat(padding) + text;
+      }
+
+      // Función para formatear línea con precio alineado a la derecha
+      function formatLine(label, amount) {
+        const maxWidth = 32;
+        const totalLength = label.length + amount.length;
+        const spaces = Math.max(1, maxWidth - totalLength);
+        return label + ' '.repeat(spaces) + amount;
+      }
+
+      // Función para formatear items de manera compacta
+      function formatItem(item, index) {
+        const itemNum = String(index + 1).padStart(2, '0');
+        const name = item.materialName.length > 28 ? item.materialName.substring(0, 25) + '...' : item.materialName;
+        const dimensions = `${item.width}x${item.height}cm`;
+        const qty = item.quantity > 1 ? ` x${item.quantity}` : '';
+        const price = `S/ ${(item.subtotal || item.totalCost).toFixed(2)}`;
+
+        return `${itemNum}. ${name}
+    ${dimensions}${qty}
+${formatLine('', price)}`;
+      }
+
+      return `${centerText(data.companyName)}
+${centerText(`RUC: ${data.companyRuc}`)}
+${centerText(data.companyAddress)}
+${centerText(`Tel: ${data.companyPhone}`)}
+
+================================
+
+${centerText('BOLETA ELECTRONICA')}
+${centerText(ticketNumber)}
+
+${formatLine('FECHA:', data.date)}
+${formatLine('HORA:', data.time)}
+
+${formatLine('CLIENTE:', data.clientName)}
+${data.clientPhone ? formatLine('TELEFONO:', data.clientPhone) : ''}
+
+================================
+${centerText('DETALLE DE VENTA')}
+================================
+
+${data.items.map((item, index) => formatItem(item, index)).join('\n\n')}
+
+--------------------------------
+${formatLine('SUBTOTAL:', data.subtotal)}
+${data.discount !== '-S/ 0.00' ? formatLine('DESCUENTO:', data.discount) : ''}
+${formatLine('IGV (18%):', data.igv)}
+================================
+${formatLine('TOTAL A PAGAR:', data.total)}
+================================
+
+${formatLine('FORMA DE PAGO:', 'EFECTIVO')}
+
+${data.startTime ? formatLine('HORA INICIO:', data.startTime.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })) : ''}
+${data.endTime ? formatLine('HORA FIN:', data.endTime.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })) : ''}
+${data.totalWorkTime ? formatLine('TIEMPO TOTAL:', data.totalWorkTime) : ''}
+
+${formatLine('GARANTIA:', data.warranty)}
+
+${centerText('Representacion impresa de')}
+${centerText('comprobante electronico')}
+
+${centerText('Gracias por su preferencia!')}
+
+${centerText(`Hash: ${btoa(ticketNumber + data.date).substring(0, 16)}`)}
+${centerText('www.sunat.gob.pe')}`;
+    }
+
+    // Enviar por WhatsApp (simplificado)
+    function sendTicketWhatsApp(data) {
+      const ticketText = generateTicketText(data);
+      const message = `🧾 *BOLETA ELECTRÓNICA*
+
+Hola *${data.clientName}*! 👋
+
+Gracias por confiar en ${data.companyName}.
+Aquí tienes tu boleta del trabajo realizado:
+
+${ticketText}
+
+🛡️ *Garantía: ${data.warranty}*
+📱 *Consultas: ${data.companyPhone}*
+
+¡Gracias por tu preferencia! 🚗✨`;
+
+      const phoneNumber = data.clientPhone.replace(/\D/g, ''); // Solo números
+      const encodedMessage = encodeURIComponent(message);
+
+      if (phoneNumber && phoneNumber.length >= 9) {
+        const whatsappUrl = `https://wa.me/51${phoneNumber}?text=${encodedMessage}`;
+        window.open(whatsappUrl, '_blank');
+        showToast('✅ Enviando boleta por WhatsApp...', 'success');
+      } else {
+        // Si no hay teléfono válido, abrir WhatsApp Web genérico
+        const whatsappUrl = `https://web.whatsapp.com/send?text=${encodedMessage}`;
+        window.open(whatsappUrl, '_blank');
+        showToast('📱 Selecciona el contacto en WhatsApp', 'info');
+      }
+    }
+
+    // Descargar como imagen (mejorado)
+    function downloadTicket(data) {
+      const ticketText = generateTicketText(data);
+
+      // Crear canvas para generar imagen de mejor calidad
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      // Configurar canvas con mejor resolución
+      canvas.width = 480;
+      canvas.height = 700;
+
+      // Fondo blanco con borde
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Borde negro
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+
+      // Configurar texto con mejor fuente
+      ctx.fillStyle = 'black';
+      ctx.font = '13px "Courier New", monospace';
+      ctx.textAlign = 'left';
+
+      // Dibujar texto línea por línea
+      const lines = ticketText.split('\n');
+      let y = 35;
+
+      lines.forEach(line => {
+        ctx.fillText(line, 20, y);
+        y += 16;
+      });
+
+      // Descargar imagen con nombre más descriptivo
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const fileName = `Boleta_${data.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.png`;
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('✅ Boleta descargada exitosamente', 'success');
+      });
+    }
+
+    // Función de email eliminada para simplificar - usar WhatsApp o descarga
+
+    // Copiar texto al portapapeles
+    function copyTicketText(data) {
+      const ticketText = generateTicketText(data);
+
+      navigator.clipboard.writeText(ticketText).then(() => {
+        showToast('✅ Ticket copiado al portapapeles', 'success');
+      }).catch(() => {
+        // Fallback para navegadores que no soportan clipboard API
+        const textArea = document.createElement('textarea');
+        textArea.value = ticketText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        showToast('✅ Ticket copiado al portapapeles', 'success');
+      });
+    }
+
+    // Funciones de vista previa eliminadas para simplificar
+
+    // ===== FUNCIONES PARA TRABAJO PERSONALIZADO =====
+
+    // Mostrar modal de trabajo personalizado
+    function showCustomWorkModal() {
+      // Limpiar formulario
+      document.getElementById('customWorkForm').reset();
+      document.getElementById('customWorkQuantity').value = '1';
+
+      // Mostrar modal
+      document.getElementById('modalCustomWork').classList.remove('hidden');
+
+      // Focus en el nombre
+      setTimeout(() => {
+        document.getElementById('customWorkName').focus();
+      }, 100);
+    }
+
+    // Cerrar modal de trabajo personalizado
+    function closeCustomWorkModal() {
+      document.getElementById('modalCustomWork').classList.add('hidden');
+    }
+
+    // Calcular precio automático para trabajo personalizado
+    function calculateCustomPrice() {
+      const width = parseFloat(document.getElementById('customWorkWidth').value) || 100;
+      const height = parseFloat(document.getElementById('customWorkHeight').value) || 50;
+      const quantity = parseInt(document.getElementById('customWorkQuantity').value) || 1;
+
+      // Usar material genérico para cálculo (Vinil Panorámico)
+      const genericMaterial = materials.find(m => m.name.includes('Vinil Panorámico')) || materials[12];
+
+      if (genericMaterial) {
+        const calculation = calculateMaterialCost(width, height, genericMaterial, quantity, 0, 'plano', {});
+        document.getElementById('customWorkPrice').value = calculation.unitCost.toFixed(2);
+
+        showToast(`💰 Precio calculado: S/ ${calculation.unitCost.toFixed(2)}`, 'success');
+      } else {
+        // Cálculo básico si no hay material
+        const area = (width * height * quantity) / 10000; // m²
+        const pricePerM2 = 50; // Precio base por m²
+        const estimatedPrice = area * pricePerM2;
+
+        document.getElementById('customWorkPrice').value = estimatedPrice.toFixed(2);
+        showToast(`💰 Precio estimado: S/ ${estimatedPrice.toFixed(2)}`, 'info');
+      }
+    }
+
+    // Manejar envío del formulario de trabajo personalizado
+    document.getElementById('customWorkForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById('customWorkName').value.trim();
+      const width = parseFloat(document.getElementById('customWorkWidth').value) || 100;
+      const height = parseFloat(document.getElementById('customWorkHeight').value) || 50;
+      const quantity = parseInt(document.getElementById('customWorkQuantity').value) || 1;
+      const discount = parseFloat(document.getElementById('customWorkDiscount').value) || 0;
+      const price = parseFloat(document.getElementById('customWorkPrice').value);
+      const workType = document.getElementById('customWorkType').value;
+
+      if (!name) {
+        showToast('❌ Por favor ingresa un nombre para el trabajo', 'error');
+        return;
+      }
+
+      if (!price || price <= 0) {
+        showToast('❌ Por favor ingresa un precio válido', 'error');
+        return;
+      }
+
+      // Crear trabajo personalizado
+      addCustomWork(name, width, height, quantity, discount, price, workType);
+
+      // Cerrar modal
+      closeCustomWorkModal();
+    });
+
+    // Agregar trabajo personalizado a la tabla
+    function addCustomWork(name, width, height, quantity, discount, price, workType) {
+      console.log(`🎨 Agregando trabajo personalizado: ${name}`);
+
+      // Usar material genérico para cálculos
+      const genericMaterial = materials.find(m => m.name.includes('Vinil Panorámico')) || materials[0];
+
+      // Crear cálculo personalizado
+      const area = (width * height * quantity) / 10000;
+      const subtotalBeforeDiscount = price * quantity;
+      const discountAmount = subtotalBeforeDiscount * (discount / 100);
+      const finalPrice = subtotalBeforeDiscount - discountAmount;
+
+      // Obtener modalidad de venta para mano de obra
+      const modalidadVenta = document.querySelector('input[name="modalidadVenta"]:checked')?.value || 'solo_material';
+      let laborCost = 0;
+
+      if (modalidadVenta === 'trabajo_completo') {
+        laborCost = area * 15; // S/ 15 por m² básico
+      } else if (modalidadVenta === 'mixto') {
+        const laborType = document.getElementById('laborType')?.value || 'none';
+        if (laborType !== 'none') {
+          const laborRates = {
+            'standard': 15, 'complex': 25, 'premium': 40,
+            'vehicle_full': 60, 'architectural': 35, 'weeding': 12
+          };
+          laborCost = area * (laborRates[laborType] || 15);
+        }
+      }
+
+      const totalWithLabor = finalPrice + laborCost;
+
+      // Crear objeto del item
+      const itemData = {
+        id: Date.now(),
+        materialName: name,
+        width: width,
+        height: height,
+        quantity: quantity,
+        area: area,
+        unitCost: price,
+        discount: discount,
+        subtotal: totalWithLabor,
+        tipoTrabajo: workType,
+        totalCost: totalWithLabor,
+        laborCost: laborCost,
+        extras: {},
+        isCustom: true // Marcar como personalizado
+      };
+
+      // Crear objeto de cálculo simulado
+      const calculation = {
+        unitCost: price,
+        realUnitCost: price * 0.7, // Estimar costo real como 70% del precio
+        totalCost: totalWithLabor,
+        laborCost: laborCost,
+        discountAmount: discountAmount,
+        area: area,
+        metersUsed: Math.max(height / 100, 0.5),
+        wastePercentage: 8,
+        marginPercentage: 30
+      };
+
+      // Agregar a la lista
+      currentItems.push(itemData);
+
+      // Agregar fila a la tabla
+      addRowToTable(itemData, genericMaterial, calculation);
+
+      // Actualizar totales
+      updateTotal();
+
+      // Mostrar mensaje de éxito
+      showToast(`✅ ${name} agregado - S/${totalWithLabor.toFixed(2)}`, 'success');
+
+      console.log(`✅ Trabajo personalizado agregado:`, itemData);
+    }
+
+    // ===== FUNCIONES PARA FORMULARIO MEJORADO =====
+
+    // Función principal para agregar trabajo personalizado desde formulario mejorado
+    function agregarTrabajoPersonalizado() {
+      const nombreTrabajo = document.getElementById('nombreTrabajo').value.trim();
+      const ancho = parseFloat(document.getElementById('ancho').value);
+      const alto = parseFloat(document.getElementById('alto').value);
+      const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
+      const descuento = parseFloat(document.getElementById('descuento').value) || 0;
+
+      // Validaciones
+      if (!nombreTrabajo) {
+        showToast('❌ Por favor ingresa un nombre para el trabajo', 'error');
+        document.getElementById('nombreTrabajo').focus();
+        return;
+      }
+
+      if (!ancho || ancho <= 0) {
+        showToast('❌ Por favor ingresa un ancho válido', 'error');
+        document.getElementById('ancho').focus();
+        return;
+      }
+
+      if (!alto || alto <= 0) {
+        showToast('❌ Por favor ingresa un alto válido', 'error');
+        document.getElementById('alto').focus();
+        return;
+      }
+
+      // Usar la función existente agregarFila() pero con nombre personalizado
+      // Temporalmente guardar el nombre personalizado
+      window.nombreTrabajoPersonalizado = nombreTrabajo;
+
+      // Llamar a la función original
+      agregarFila();
+
+      // Limpiar el nombre temporal
+      delete window.nombreTrabajoPersonalizado;
+
+      // Limpiar formulario
+      limpiarFormulario();
+    }
+
+    // Limpiar formulario después de agregar
+    function limpiarFormulario() {
+      document.getElementById('nombreTrabajo').value = '';
+      document.getElementById('ancho').value = '';
+      document.getElementById('alto').value = '';
+      document.getElementById('cantidad').value = '1';
+      document.getElementById('descuento').value = '';
+
+      // Ocultar cálculo en tiempo real
+      document.getElementById('calculoTiempoReal').style.display = 'none';
+
+      // Focus en nombre para siguiente trabajo
+      setTimeout(() => {
+        document.getElementById('nombreTrabajo').focus();
+      }, 100);
+    }
+
+    // Calcular en tiempo real cuando cambian los valores
+    function calcularTiempoReal() {
+      const ancho = parseFloat(document.getElementById('ancho').value) || 0;
+      const alto = parseFloat(document.getElementById('alto').value) || 0;
+      const cantidad = parseInt(document.getElementById('cantidad').value) || 1;
+      const descuento = parseFloat(document.getElementById('descuento').value) || 0;
+
+      if (ancho > 0 && alto > 0) {
+        // Obtener material seleccionado
+        const materialSelect = document.getElementById('opciones');
+        const materialId = materialSelect.value;
+        const material = materials.find(m => m.id == materialId);
+
+        if (material) {
+          // Obtener complejidad seleccionada
+          const complejidad = document.querySelector('input[name="complejidadTrabajo"]:checked')?.value || 'simple';
+          const tipoTrabajo = complejidad === 'forrado' ? 'forrado' : 'plano';
+
+          // Calcular usando función existente
+          const calculation = calculateMaterialCost(ancho, alto, material, cantidad, descuento, tipoTrabajo, {});
+
+          // Mostrar resultados
+          document.getElementById('costoMaterial').textContent = `S/ ${calculation.unitCost.toFixed(2)}`;
+          document.getElementById('costoManoObra').textContent = `S/ ${(calculation.laborCost || 0).toFixed(2)}`;
+
+          const ganancia = calculation.unitCost - (calculation.realUnitCost || calculation.unitCost * 0.7);
+          document.getElementById('ganancia').textContent = `S/ ${ganancia.toFixed(2)}`;
+          document.getElementById('totalCalculado').textContent = `S/ ${calculation.totalCost.toFixed(2)}`;
+
+          // Mostrar panel de cálculo
+          document.getElementById('calculoTiempoReal').style.display = 'block';
+        }
+      } else {
+        // Ocultar panel si no hay datos suficientes
+        document.getElementById('calculoTiempoReal').style.display = 'none';
+      }
+    }
+
+    // Agregar event listeners para cálculo en tiempo real
+    document.addEventListener('DOMContentLoaded', function () {
+      const inputs = ['ancho', 'alto', 'cantidad', 'descuento', 'opciones'];
+      inputs.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.addEventListener('input', calcularTiempoReal);
+          element.addEventListener('change', calcularTiempoReal);
+        }
+      });
+
+      // Event listener para complejidad
+      document.querySelectorAll('input[name="complejidadTrabajo"]').forEach(radio => {
+        radio.addEventListener('change', calcularTiempoReal);
+      });
+
+      // Event listener para modalidad de venta
+      document.querySelectorAll('input[name="modalidadVenta"]').forEach(radio => {
+        radio.addEventListener('change', toggleComplejidadSection);
+      });
+
+      // Inicializar visibilidad de complejidad
+      toggleComplejidadSection();
+    });
+
+    // Función para mostrar/ocultar sección de complejidad
+    function toggleComplejidadSection() {
+      const modalidadVenta = document.querySelector('input[name="modalidadVenta"]:checked')?.value;
+      const complejidadSection = document.getElementById('complejidadSection');
+
+      if (modalidadVenta === 'solo_material') {
+        // Ocultar complejidad en solo material
+        complejidadSection.style.display = 'none';
+      } else {
+        // Mostrar complejidad en trabajo completo y mixto
+        complejidadSection.style.display = 'block';
+      }
+
+      // Recalcular si hay datos
+      calcularTiempoReal();
+    }
+
+    // Modificar función agregarFila para usar nombre personalizado
+    const originalAgregarFila = agregarFila;
+    agregarFila = function () {
+      // Si hay nombre personalizado, usarlo
+      if (window.nombreTrabajoPersonalizado) {
+        // Temporalmente modificar el material name para incluir el nombre personalizado
+        const materialSelect = document.getElementById('opciones');
+        const originalText = materialSelect.options[materialSelect.selectedIndex].text;
+        materialSelect.options[materialSelect.selectedIndex].text = window.nombreTrabajoPersonalizado;
+
+        // Llamar función original
+        originalAgregarFila();
+
+        // Restaurar texto original
+        materialSelect.options[materialSelect.selectedIndex].text = originalText;
+      } else {
+        // Llamar función original normalmente
+        originalAgregarFila();
+      }
+    };
+
+    // ===== FUNCIONES DE VISTA PREVIA RESTAURADAS =====
+
+    // Mostrar vista previa del ticket
+    function showTicketPreview() {
+      try {
+        const data = generateTicketData();
+        const ticketText = generateTicketText(data);
+
+        document.getElementById('ticketPreviewContent').textContent = ticketText;
+        document.getElementById('modalTicketPreview').classList.remove('hidden');
+
+        console.log('✅ Vista previa generada correctamente');
+      } catch (error) {
+        console.error('❌ Error al generar vista previa:', error);
+        showToast('❌ Error al generar vista previa', 'error');
+      }
+    }
+
+    // Cerrar vista previa del ticket
+    function closeTicketPreview() {
+      document.getElementById('modalTicketPreview').classList.add('hidden');
+    }
+
+    // ===== SISTEMA DE PESTAÑAS =====
+
+    // Cambiar entre pestañas
+    function switchTab(tabName) {
+      // Ocultar todos los contenidos
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.style.display = 'none';
+      });
+
+      // Remover clase activa de todas las pestañas
+      document.querySelectorAll('[id^="tab"]').forEach(tab => {
+        tab.className = tab.className.replace('tab-active', 'tab-inactive');
+      });
+
+      // Mostrar contenido seleccionado
+      document.getElementById(`content${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).style.display = 'block';
+
+      // Activar pestaña seleccionada
+      document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).className =
+        document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).className.replace('tab-inactive', 'tab-active');
+
+      // Cargar materiales en calculadora rápida si es necesario
+      if (tabName === 'calculadora') {
+        loadRapidMaterials();
+      }
+
+      // Cargar lista de materiales si es necesario
+      if (tabName === 'materiales') {
+        loadMaterialsList();
+      }
+    }
+
+    // ===== CALCULADORA RÁPIDA =====
+
+    let rapidCalculations = [];
+    let rapidCounter = 1;
+
+    // Cargar materiales en select de calculadora rápida (sin precios)
+    function loadRapidMaterials() {
+      const select = document.getElementById('rapidMaterial');
+      if (select.options.length <= 1) { // Solo cargar si no está cargado
+        select.innerHTML = '<option value="">Seleccionar material...</option>';
+        materials.forEach(material => {
+          const option = document.createElement('option');
+          option.value = material.id;
+          option.textContent = material.name; // Solo nombre, sin precios
+          select.appendChild(option);
+        });
+      }
+    }
+
+    // Calcular en tiempo real para calculadora rápida
+    function calculateRapid() {
+      const materialId = document.getElementById('rapidMaterial').value;
+      const width = parseFloat(document.getElementById('rapidWidth').value) || 0;
+      const height = parseFloat(document.getElementById('rapidHeight').value) || 0;
+
+      if (materialId && width > 0 && height > 0) {
+        const material = materials.find(m => m.id == materialId);
+        if (material) {
+          const calculation = calculateMaterialCost(width, height, material, 1, 0, 'plano', {});
+
+          // Mostrar resultados
+          document.getElementById('rapidCost').textContent = `S/ ${calculation.unitCost.toFixed(2)}`;
+          document.getElementById('rapidMeters').textContent = `${calculation.metersUsed.toFixed(2)}m`;
+          document.getElementById('rapidArea').textContent = `${((width * height) / 10000).toFixed(2)} m²`;
+          document.getElementById('rapidSuggested').textContent = `S/ ${(calculation.unitCost * 1.5).toFixed(2)}`;
+
+          document.getElementById('rapidResult').style.display = 'block';
+        }
+      } else {
+        document.getElementById('rapidResult').style.display = 'none';
+      }
+    }
+
+    // Agregar cálculo a la tabla
+    function addRapidCalculation() {
+      const materialId = document.getElementById('rapidMaterial').value;
+      const width = parseFloat(document.getElementById('rapidWidth').value);
+      const height = parseFloat(document.getElementById('rapidHeight').value);
+
+      if (!materialId) {
+        showToast('❌ Selecciona un material', 'error');
+        return;
+      }
+
+      if (!width || width <= 0) {
+        showToast('❌ Ingresa un ancho válido', 'error');
+        return;
+      }
+
+      if (!height || height <= 0) {
+        showToast('❌ Ingresa un alto válido', 'error');
+        return;
+      }
+
+      const material = materials.find(m => m.id == materialId);
+      const calculation = calculateMaterialCost(width, height, material, 1, 0, 'plano', {});
+
+      const rapidItem = {
+        id: rapidCounter++,
+        materialId: materialId,
+        materialName: material.name,
+        width: width,
+        height: height,
+        cost: calculation.unitCost,
+        meters: calculation.metersUsed,
+        area: (width * height) / 10000
+      };
+
+      rapidCalculations.push(rapidItem);
+      updateRapidTable();
+      updateRapidTotals();
+
+      // Limpiar formulario
+      document.getElementById('rapidWidth').value = '';
+      document.getElementById('rapidHeight').value = '';
+      document.getElementById('rapidResult').style.display = 'none';
+
+      showToast(`✅ ${material.name} agregado`, 'success');
+    }
+
+    // Actualizar tabla de cálculos rápidos
+    function updateRapidTable() {
+      const tbody = document.getElementById('rapidTableBody');
+      const emptyMessage = document.getElementById('rapidEmptyMessage');
+
+      if (rapidCalculations.length === 0) {
+        emptyMessage.style.display = 'table-row';
+        return;
+      }
+
+      emptyMessage.style.display = 'none';
+
+      // Limpiar filas existentes (excepto mensaje vacío)
+      Array.from(tbody.children).forEach(row => {
+        if (row.id !== 'rapidEmptyMessage') {
+          row.remove();
+        }
+      });
+
+      // Agregar filas
+      rapidCalculations.forEach((item, index) => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td class="px-4 py-3 text-sm font-medium text-gray-900">${index + 1}</td>
+          <td class="px-4 py-3 text-sm text-gray-900">${item.materialName}</td>
+          <td class="px-4 py-3 text-sm text-center text-gray-900">${item.width} × ${item.height} cm</td>
+          <td class="px-4 py-3 text-sm text-center text-gray-900">${item.meters.toFixed(2)}m</td>
+          <td class="px-4 py-3 text-sm text-right font-medium text-gray-900">S/ ${item.cost.toFixed(2)}</td>
+          <td class="px-4 py-3 text-sm text-center">
+            <div class="flex gap-2 justify-center">
+              <button onclick="editRapidItem(${item.id})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium transition">
+                <i class="fas fa-edit mr-1"></i>Editar
+              </button>
+              <button onclick="deleteRapidItem(${item.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition">
+                <i class="fas fa-trash mr-1"></i>Eliminar
+              </button>
+            </div>
+          </td>
+        `;
+      });
+    }
+
+    // Actualizar totales de calculadora rápida
+    function updateRapidTotals() {
+      const totalItems = rapidCalculations.length;
+      const totalMeters = rapidCalculations.reduce((sum, item) => sum + item.meters, 0);
+      const totalCost = rapidCalculations.reduce((sum, item) => sum + item.cost, 0);
+      const totalSuggested = totalCost * 1.5;
+
+      document.getElementById('rapidTotalItems').textContent = totalItems;
+      document.getElementById('rapidTotalMeters').textContent = `${totalMeters.toFixed(2)}m`;
+      document.getElementById('rapidTotalCost').textContent = `S/ ${totalCost.toFixed(2)}`;
+      document.getElementById('rapidTotalSuggested').textContent = `S/ ${totalSuggested.toFixed(2)}`;
+    }
+
+    // Editar item de calculadora rápida
+    function editRapidItem(itemId) {
+      const item = rapidCalculations.find(calc => calc.id === itemId);
+      if (item) {
+        document.getElementById('rapidMaterial').value = item.materialId;
+        document.getElementById('rapidWidth').value = item.width;
+        document.getElementById('rapidHeight').value = item.height;
+
+        // Eliminar item actual y permitir re-agregar
+        deleteRapidItem(itemId);
+        calculateRapid();
+
+        showToast('📝 Item cargado para edición', 'info');
+      }
+    }
+
+    // Eliminar item de calculadora rápida
+    function deleteRapidItem(itemId) {
+      rapidCalculations = rapidCalculations.filter(calc => calc.id !== itemId);
+      updateRapidTable();
+      updateRapidTotals();
+      showToast('🗑️ Item eliminado', 'success');
+    }
+
+    // Limpiar toda la tabla
+    function clearRapidTable() {
+      if (rapidCalculations.length === 0) {
+        showToast('ℹ️ No hay consultas para limpiar', 'info');
+        return;
+      }
+
+      if (confirm('¿Estás seguro de que quieres limpiar todas las consultas?')) {
+        rapidCalculations = [];
+        rapidCounter = 1;
+        updateRapidTable();
+        updateRapidTotals();
+        showToast('🧹 Tabla limpiada', 'success');
+      }
+    }
+
+    // Exportar a cotización completa
+    function exportToQuote() {
+      if (rapidCalculations.length === 0) {
+        showToast('❌ No hay consultas para exportar', 'error');
+        return;
+      }
+
+      // Cambiar a pestaña de cotización
+      switchTab('cotizacion');
+
+      // Agregar items a la cotización principal
+      rapidCalculations.forEach(item => {
+        const material = materials.find(m => m.id == item.materialId);
+        if (material) {
+          // Simular agregar a cotización
+          // Aquí podrías integrar con el sistema existente
+          console.log(`Exportando: ${item.materialName} ${item.width}x${item.height}`);
+        }
+      });
+
+      showToast(`📋 ${rapidCalculations.length} consultas exportadas a cotización`, 'success');
+    }
+
+    // ===== GESTIÓN DE MATERIALES =====
+
+    let editingMaterialId = null;
+
+    // Cargar lista de materiales
+    function loadMaterialsList() {
+      const container = document.getElementById('materialsList');
+      container.innerHTML = '';
+
+      materials.forEach(material => {
+        const realPrice = getMaterialRealPrice(material);
+        const salePrice = getMaterialSalePrice(material);
+        const margin = ((salePrice - realPrice) / realPrice * 100);
+
+        const materialCard = document.createElement('div');
+        materialCard.className = 'p-4 hover:bg-gray-50 transition';
+        materialCard.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <h5 class="font-semibold text-gray-900">${material.name}</h5>
+              <div class="text-sm text-gray-600 mt-1">
+                <span class="inline-block mr-4">📏 ${material.width}×${material.length}m</span>
+                <span class="inline-block mr-4">💰 Costo: S/ ${realPrice.toFixed(2)}</span>
+                <span class="inline-block">📈 Ganancia: ${margin.toFixed(1)}%</span>
+              </div>
+            </div>
+            <div class="flex gap-2 ml-4">
+              <button onclick="editMaterial(${material.id})" 
+                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition">
+                <i class="fas fa-edit mr-1"></i>Editar
+              </button>
+              <button onclick="deleteMaterial(${material.id})" 
+                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition">
+                <i class="fas fa-trash mr-1"></i>Eliminar
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(materialCard);
+      });
+    }
+
+    // Calcular vista previa del material
+    function calculateMaterialPreview() {
+      const cost = parseFloat(document.getElementById('materialCost').value) || 0;
+      const margin = parseFloat(document.getElementById('materialMargin').value) || 0;
+      const length = parseFloat(document.getElementById('materialLength').value) || 1;
+
+      if (cost > 0 && margin > 0) {
+        const salePrice = cost * (1 + margin / 100);
+        const marginAmount = salePrice - cost;
+        const pricePerMeter = salePrice / length;
+
+        document.getElementById('previewCost').textContent = `S/ ${cost.toFixed(2)}`;
+        document.getElementById('previewPrice').textContent = `S/ ${salePrice.toFixed(2)}`;
+        document.getElementById('previewMargin').textContent = `S/ ${marginAmount.toFixed(2)}`;
+        document.getElementById('previewPerMeter').textContent = `S/ ${pricePerMeter.toFixed(2)}/m`;
+
+        document.getElementById('materialPreview').style.display = 'block';
+      } else {
+        document.getElementById('materialPreview').style.display = 'none';
+      }
+    }
+
+    // Funciones para persistencia de materiales en JSON
+    function saveMaterialsToJSON() {
+      try {
+        // Guardar todos los materiales en la "base de datos" local
+        const materialsData = {
+          materials: materials,
+          lastUpdated: new Date().toISOString(),
+          totalMaterials: materials.length
+        };
+        
+        localStorage.setItem('materialsDatabase', JSON.stringify(materialsData));
+        console.log('✅ Base de datos de materiales actualizada:', materials.length, 'materiales');
+        
+        // También crear un backup
+        localStorage.setItem('materialsBackup', JSON.stringify(materialsData));
+        
+        return true;
+      } catch (error) {
+        console.error('❌ Error al guardar base de datos de materiales:', error);
+        return false;
+      }
+    }
+
+    function loadMaterialsFromJSON() {
+      try {
+        // Cargar desde la "base de datos" local
+        const saved = localStorage.getItem('materialsDatabase');
+        if (saved) {
+          const data = JSON.parse(saved);
+          if (data.materials && Array.isArray(data.materials)) {
+            materials.length = 0; // Limpiar array actual
+            materials.push(...data.materials);
+            console.log('✅ Materiales cargados desde base de datos:', materials.length);
+            console.log('📅 Última actualización:', data.lastUpdated);
+            return true;
+          }
+        }
+        return false;
+      } catch (error) {
+        console.error('❌ Error al cargar base de datos de materiales:', error);
+        return false;
+      }
+    }
+
+    // Agregar nuevo material
+    function addMaterial(materialData) {
+      const newId = Math.max(...materials.map(m => m.id)) + 1;
+      const newMaterial = {
+        id: newId,
+        name: materialData.name,
+        cost: materialData.cost,
+        markup: materialData.cost * (materialData.margin / 100),
+        width: materialData.width,
+        length: materialData.length,
+        discountCm: 9,
+        type: materialData.type,
+        minOrder: 0.5,
+        brand: 'Personalizado'
+      };
+
+      materials.push(newMaterial);
+      
+      // Guardar en base de datos JSON
+      const saved = saveMaterialsToJSON();
+      if (saved) {
+        console.log('💾 Material guardado en base de datos:', newMaterial.name);
+      }
+      
+      loadMaterialsList();
+      loadRapidMaterials(); // Actualizar select de calculadora rápida
+      loadMaterials(); // Actualizar select principal de cotización
+
+      showToast(`✅ Material "${materialData.name}" agregado correctamente`, 'success');
+    }
+
+    // Editar material existente
+    function editMaterial(materialId) {
+      const material = materials.find(m => m.id === materialId);
+      if (material) {
+        editingMaterialId = materialId;
+
+        // Cargar datos en formulario
+        document.getElementById('materialName').value = material.name;
+        document.getElementById('materialCost').value = material.cost;
+        document.getElementById('materialWidth').value = material.width;
+        document.getElementById('materialLength').value = material.length;
+        document.getElementById('materialType').value = material.type || 'standard';
+
+        // Calcular margen actual
+        const currentMargin = (material.markup / material.cost * 100);
+        document.getElementById('materialMargin').value = currentMargin.toFixed(0);
+
+        calculateMaterialPreview();
+
+        // Cambiar texto del botón
+        const submitBtn = document.querySelector('#materialForm button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i>Actualizar Material';
+
+        showToast(`📝 Material "${material.name}" cargado para edición`, 'info');
+      }
+    }
+
+    // Eliminar material
+    function deleteMaterial(materialId) {
+      const material = materials.find(m => m.id === materialId);
+      if (material && confirm(`¿Estás seguro de eliminar "${material.name}"?`)) {
+        const index = materials.findIndex(m => m.id === materialId);
+        materials.splice(index, 1);
+
+        // Guardar cambios en base de datos JSON
+        saveMaterialsToJSON();
+
+        loadMaterialsList();
+        loadRapidMaterials(); // Actualizar select de calculadora rápida
+        loadMaterials(); // Actualizar select principal de cotización
+
+        showToast(`🗑️ Material "${material.name}" eliminado`, 'success');
+      }
+    }
+
+    // Limpiar formulario de material
+    function clearMaterialForm() {
+      document.getElementById('materialForm').reset();
+      document.getElementById('materialPreview').style.display = 'none';
+      editingMaterialId = null;
+
+      // Restaurar texto del botón
+      const submitBtn = document.querySelector('#materialForm button[type="submit"]');
+      submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i>Guardar Material';
+    }
+
+    // Manejar envío del formulario de material
+    document.addEventListener('DOMContentLoaded', function () {
+      // Event listeners existentes...
+
+      // Event listeners para gestión de materiales
+      const materialInputs = ['materialCost', 'materialMargin', 'materialLength'];
+      materialInputs.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.addEventListener('input', calculateMaterialPreview);
+        }
+      });
+
+      // Formulario de material
+      document.getElementById('materialForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const materialData = {
+          name: document.getElementById('materialName').value.trim(),
+          cost: parseFloat(document.getElementById('materialCost').value),
+          margin: parseFloat(document.getElementById('materialMargin').value),
+          width: parseInt(document.getElementById('materialWidth').value),
+          length: parseFloat(document.getElementById('materialLength').value),
+          type: document.getElementById('materialType').value
+        };
+
+        // Validaciones
+        if (!materialData.name) {
+          showToast('❌ Ingresa un nombre para el material', 'error');
+          return;
+        }
+
+        if (materialData.cost <= 0) {
+          showToast('❌ El costo debe ser mayor a 0', 'error');
+          return;
+        }
+
+        if (materialData.margin <= 0) {
+          showToast('❌ La ganancia debe ser mayor a 0', 'error');
+          return;
+        }
+
+        if (editingMaterialId) {
+          // Actualizar material existente
+          const material = materials.find(m => m.id === editingMaterialId);
+          if (material) {
+            material.name = materialData.name;
+            material.cost = materialData.cost;
+            material.markup = materialData.cost * (materialData.margin / 100);
+            material.width = materialData.width;
+            material.length = materialData.length;
+            material.type = materialData.type;
+
+            // Guardar cambios en base de datos JSON
+            saveMaterialsToJSON();
+
+            loadMaterialsList();
+            loadRapidMaterials();
+            loadMaterials(); // Actualizar select principal de cotización
+            clearMaterialForm();
+
+            showToast(`✅ Material "${materialData.name}" actualizado`, 'success');
+          }
+        } else {
+          // Agregar nuevo material
+          addMaterial(materialData);
+          clearMaterialForm();
+        }
+      });
+    });
+
+    // Event listeners para calculadora rápida
+    document.addEventListener('DOMContentLoaded', function () {
+      // Event listeners existentes...
+
+      // Nuevos event listeners para calculadora rápida
+      const rapidInputs = ['rapidMaterial', 'rapidWidth', 'rapidHeight'];
+      rapidInputs.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.addEventListener('input', calculateRapid);
+          element.addEventListener('change', calculateRapid);
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

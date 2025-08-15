@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug - Viniles</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 p-4">
+  <div class="max-w-md mx-auto bg-white rounded-lg shadow p-4">
+    <h1 class="text-xl font-bold mb-4">Debug Test</h1>
+    
+    <button onclick="testFunction()" class="bg-blue-500 text-white px-4 py-2 rounded">
+      Test Function
+    </button>
+    
+    <div id="result" class="mt-4 p-2 bg-gray-100 rounded"></div>
+  </div>
+
+  <script>
+    function testFunction() {
+      try {
+        console.log('Testing basic functionality...');
+        document.getElementById('result').innerHTML = 'Test successful!';
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('result').innerHTML = 'Error: ' + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
