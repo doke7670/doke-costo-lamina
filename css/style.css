@@ -468,6 +468,28 @@ button i {
     min-width: auto;
     width: 100%;
   }
+  
+  /* Regla global para prevenir overflow horizontal */
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Contenedor principal que causa la sombra */
+  body.bg-negro {
+    padding: 0.5rem !important;
+    margin: 0 !important;
+  }
+  
+  /* Contenedor principal sin sombra */
+  .container.mx-auto.max-w-7xl {
+    max-width: calc(100vw - 1rem) !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+  }
 }
 
 /*=====RESPONSIVE DESIGN ADICIONAL=====*/
@@ -480,6 +502,18 @@ button i {
   .overflow-x-auto {
     -ms-overflow-style: none;
     scrollbar-width: none;
+    max-width: 100% !important;
+  }
+  
+  /* Prevenir que las tablas causen overflow */
+  .overflow-x-auto table {
+    max-width: 100% !important;
+  }
+  
+  /* Contenedor de tabla sin overflow */
+  .bg-white.rounded-xl.shadow-lg {
+    max-width: 100% !important;
+    overflow: hidden !important;
   }
 }
 
@@ -1850,12 +1884,13 @@ ECT DE MATERIALES TEMA OSCURO ===== */
 .tab-active {
   background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   color: white;
-  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+  box-shadow: none; /* Removido para evitar sombras en mobile */
 }
 
 .tab-inactive {
   background: transparent;
   color: #9ca3af;
+  box-shadow: none;
 }
 
 .tab-inactive:hover {
@@ -1863,9 +1898,47 @@ ECT DE MATERIALES TEMA OSCURO ===== */
   color: #f97316;
 }
 
+/* Mejorar pestañas en mobile */
+@media (max-width: 768px) {
+  .tab-active, .tab-inactive {
+    box-shadow: none !important;
+    border: none;
+    outline: none;
+  }
+  
+  /* Contenedor de pestañas sin sombras */
+  .flex.bg-plomo-oscuro {
+    box-shadow: none;
+    border: none;
+  }
+  
+  /* CORRECCIÓN ESPECÍFICA PARA LA SOMBRA BLANCA */
+  body.bg-negro {
+    padding: 0.25rem !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Contenedor principal - el que causa la sombra */
+  .bg-negro-claro.rounded-xl.shadow-2xl {
+    margin: 0 !important;
+    max-width: calc(100vw - 0.5rem) !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Eliminar márgenes que causan la sombra */
+  .container.mx-auto {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
 /* Contenido de pestañas */
 .tab-content {
   animation: fadeIn 0.3s ease-in-out;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 @keyframes fadeIn {
@@ -1877,6 +1950,50 @@ ECT DE MATERIALES TEMA OSCURO ===== */
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Prevenir overflow en contenido de pestañas en mobile */
+@media (max-width: 768px) {
+  .tab-content {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  /* Todos los elementos dentro de tab-content */
+  .tab-content > * {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+}
+
+/* CORRECCIÓN AGRESIVA PARA ELIMINAR SOMBRA BLANCA */
+@media (max-width: 480px) {
+  /* Forzar que no haya overflow horizontal */
+  * {
+    box-sizing: border-box !important;
+  }
+  
+  html {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+  
+  body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    padding: 0.25rem !important;
+    margin: 0 !important;
+  }
+  
+  /* Contenedor principal que aparece en la imagen */
+  .bg-negro-claro {
+    width: calc(100vw - 0.5rem) !important;
+    max-width: calc(100vw - 0.5rem) !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
   }
 }
 
@@ -1894,6 +2011,38 @@ ECT DE MATERIALES TEMA OSCURO ===== */
 
 #rapidTable tbody tr:hover {
   background: #f8fafc;
+}
+
+/* CORRECCIÓN ESPECÍFICA PARA TABLAS QUE CAUSAN OVERFLOW */
+@media (max-width: 768px) {
+  /* Tabla principal de cotización */
+  #miTabla {
+    min-width: auto !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+  
+  /* Tabla de calc rápida */
+  #rapidTable {
+    min-width: auto !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+  
+  /* Contenedores de tablas sin overflow */
+  .overflow-x-auto {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+  }
+  
+  /* Celdas de tabla responsive */
+  #miTabla th, #miTabla td,
+  #rapidTable th, #rapidTable td {
+    padding: 0.25rem !important;
+    font-size: 0.75rem !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
 }
 
 /* Botones de acción en tabla rápida */
@@ -1943,6 +2092,30 @@ ECT DE MATERIALES TEMA OSCURO ===== */
   #rapidTable {
     font-size: 0.75rem;
   }
+  
+  /* CORRECCIÓN ESPECÍFICA PARA ELIMINAR SOMBRA BLANCA */
+  /* Solo en las pestañas que tienen tablas */
+  
+  /* Contenedor de tabla principal (Cotización) */
+  .bg-white.rounded-xl.shadow-lg.overflow-hidden {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+  }
+  
+  /* Contenedor de tabla calc rápida */
+  .bg-white.rounded-xl.shadow-lg.overflow-hidden .overflow-x-auto {
+    overflow: hidden !important;
+    max-width: 100% !important;
+  }
+  
+  /* Forzar que las tablas no se salgan */
+  table.min-w-full {
+    min-width: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
 
   .rapid-btn {
     padding: 0.125rem 0.25rem;
@@ -1953,4 +2126,3 @@ ECT DE MATERIALES TEMA OSCURO ===== */
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
-}

@@ -855,7 +855,7 @@
           style="display: none;">
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
             <div>
-              <div class="text-blue-100">Costo Material:</div>
+              <div class="text-blue-100">Costo Real:</div>
               <div id="rapidCost" class="font-bold text-lg">S/ 0.00</div>
             </div>
             <div>
@@ -867,8 +867,8 @@
               <div id="rapidArea" class="font-bold text-lg">0.0 m²</div>
             </div>
             <div>
-              <div class="text-blue-100">Precio Sugerido:</div>
-              <div id="rapidSuggested" class="font-bold text-xl text-yellow-200">S/ 0.00</div>
+              <div class="text-blue-100">Solo Material:</div>
+              <div id="rapidSuggested" class="font-bold text-xl text-green-200">S/ 0.00</div>
             </div>
           </div>
         </div>
@@ -921,11 +921,11 @@
             <div id="rapidTotalMeters" class="text-blue-400 font-bold text-xl">0.0m</div>
           </div>
           <div class="bg-negro-claro rounded-lg p-3">
-            <div class="text-gray-400 text-sm">Total Costos</div>
+            <div class="text-gray-400 text-sm">Costo Real Total</div>
             <div id="rapidTotalCost" class="text-red-400 font-bold text-xl">S/ 0.00</div>
           </div>
           <div class="bg-negro-claro rounded-lg p-3">
-            <div class="text-gray-400 text-sm">Precio Sugerido</div>
+            <div class="text-gray-400 text-sm">Total Solo Material</div>
             <div id="rapidTotalSuggested" class="text-green-400 font-bold text-xl">S/ 0.00</div>
           </div>
         </div>
@@ -1061,6 +1061,9 @@
             <h4 class="text-white font-bold">
               <i class="fas fa-list mr-2"></i>Materiales Registrados
             </h4>
+            <p id="materialsCounter" class="text-gray-200 text-sm mt-1">
+              Cargando materiales...
+            </p>
           </div>
 
           <div class="max-h-96 overflow-y-auto">
@@ -4035,11 +4038,15 @@ ${ticketText}
         if (material) {
           const calculation = calculateMaterialCost(width, height, material, 1, 0, 'plano', {});
 
-          // Mostrar resultados
-          document.getElementById('rapidCost').textContent = `S/ ${calculation.unitCost.toFixed(2)}`;
+          // Calcular EXACTAMENTE el costo tal como lo compraste
+          const costoRealPorMetro = material.cost / material.length; // Costo por metro del rollo
+          const costoTotalReal = costoRealPorMetro * calculation.metersUsed; // Solo lo que usas
+          
+          // Mostrar resultados - COSTO REAL TAL COMO LO COMPRASTE
+          document.getElementById('rapidCost').textContent = `S/ ${costoTotalReal.toFixed(2)}`;
           document.getElementById('rapidMeters').textContent = `${calculation.metersUsed.toFixed(2)}m`;
           document.getElementById('rapidArea').textContent = `${((width * height) / 10000).toFixed(2)} m²`;
-          document.getElementById('rapidSuggested').textContent = `S/ ${(calculation.unitCost * 1.5).toFixed(2)}`;
+          document.getElementById('rapidSuggested').textContent = `S/ ${costoTotalReal.toFixed(2)}`;
 
           document.getElementById('rapidResult').style.display = 'block';
         }
@@ -4072,13 +4079,17 @@ ${ticketText}
       const material = materials.find(m => m.id == materialId);
       const calculation = calculateMaterialCost(width, height, material, 1, 0, 'plano', {});
 
+      // Calcular costo real tal como se compró (igual que en calculateRapid)
+      const costoRealPorMetro = material.cost / material.length;
+      const costoTotalReal = costoRealPorMetro * calculation.metersUsed;
+
       const rapidItem = {
         id: rapidCounter++,
         materialId: materialId,
         materialName: material.name,
         width: width,
         height: height,
-        cost: calculation.unitCost,
+        cost: costoTotalReal, // Usar costo real en lugar de unitCost
         meters: calculation.metersUsed,
         area: (width * height) / 10000
       };
@@ -4142,7 +4153,8 @@ ${ticketText}
       const totalItems = rapidCalculations.length;
       const totalMeters = rapidCalculations.reduce((sum, item) => sum + item.meters, 0);
       const totalCost = rapidCalculations.reduce((sum, item) => sum + item.cost, 0);
-      const totalSuggested = totalCost * 1.5;
+      // Mostrar solo costo real, sin ganancia adicional
+      const totalSuggested = totalCost; // Sin multiplicar por 1.5
 
       document.getElementById('rapidTotalItems').textContent = totalItems;
       document.getElementById('rapidTotalMeters').textContent = `${totalMeters.toFixed(2)}m`;
@@ -4229,6 +4241,7 @@ ${ticketText}
 
         const materialCard = document.createElement('div');
         materialCard.className = 'p-4 hover:bg-gray-50 transition';
+        materialCard.setAttribute('data-material-id', material.id);
         materialCard.innerHTML = `
           <div class="flex justify-between items-start">
             <div class="flex-1">
@@ -4253,6 +4266,13 @@ ${ticketText}
         `;
         container.appendChild(materialCard);
       });
+
+      // Mostrar contador de materiales
+      const totalMaterials = materials.length;
+      const counterElement = document.getElementById('materialsCounter');
+      if (counterElement) {
+        counterElement.textContent = `${totalMaterials} materiales registrados`;
+      }
     }
 
     // Calcular vista previa del material
@@ -4341,15 +4361,31 @@ ${ticketText}
       
       // Guardar en base de datos JSON
       const saved = saveMaterialsToJSON();
-      if (saved) {
-        console.log('💾 Material guardado en base de datos:', newMaterial.name);
-      }
       
       loadMaterialsList();
       loadRapidMaterials(); // Actualizar select de calculadora rápida
       loadMaterials(); // Actualizar select principal de cotización
 
-      showToast(`✅ Material "${materialData.name}" agregado correctamente`, 'success');
+      if (saved) {
+        // Mensaje de éxito más visible
+        showToast(`🎉 ¡MATERIAL GUARDADO! "${materialData.name}" agregado correctamente`, 'success', 4000);
+        console.log('💾 Material guardado en base de datos:', newMaterial.name);
+        
+        // Efecto visual en el botón
+        const submitBtn = document.querySelector('#materialForm button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>¡Guardado!';
+        submitBtn.classList.add('bg-green-500');
+        
+        // Mostrar confirmación adicional
+        setTimeout(() => {
+          showToast(`📋 Material disponible en todas las pestañas`, 'info', 2000);
+          submitBtn.innerHTML = originalText;
+          submitBtn.classList.remove('bg-green-500');
+        }, 2000);
+      } else {
+        showToast(`❌ ERROR: No se pudo guardar "${materialData.name}"`, 'error', 5000);
+      }
     }
 
     // Editar material existente
@@ -4382,18 +4418,33 @@ ${ticketText}
     // Eliminar material
     function deleteMaterial(materialId) {
       const material = materials.find(m => m.id === materialId);
-      if (material && confirm(`¿Estás seguro de eliminar "${material.name}"?`)) {
-        const index = materials.findIndex(m => m.id === materialId);
-        materials.splice(index, 1);
+      if (material && confirm(`¿Estás seguro de eliminar "${material.name}"?\n\nEsta acción no se puede deshacer.`)) {
+        
+        // Mostrar loading mientras se elimina
+        showToast(`🔄 Eliminando "${material.name}"...`, 'info', 1500);
+        
+        setTimeout(() => {
+          const index = materials.findIndex(m => m.id === materialId);
+          materials.splice(index, 1);
 
-        // Guardar cambios en base de datos JSON
-        saveMaterialsToJSON();
+          // Guardar cambios en base de datos JSON
+          const saved = saveMaterialsToJSON();
 
-        loadMaterialsList();
-        loadRapidMaterials(); // Actualizar select de calculadora rápida
-        loadMaterials(); // Actualizar select principal de cotización
+          loadMaterialsList();
+          loadRapidMaterials(); // Actualizar select de calculadora rápida
+          loadMaterials(); // Actualizar select principal de cotización
 
-        showToast(`🗑️ Material "${material.name}" eliminado`, 'success');
+          if (saved) {
+            showToast(`🗑️ Material "${material.name}" eliminado exitosamente`, 'success', 3000);
+            
+            // Mostrar confirmación adicional
+            setTimeout(() => {
+              showToast(`🔄 Removido de todos los selects`, 'info', 2000);
+            }, 1000);
+          } else {
+            showToast(`❌ Error al eliminar "${material.name}"`, 'error');
+          }
+        }, 800);
       }
     }
 
@@ -4462,17 +4513,42 @@ ${ticketText}
             material.type = materialData.type;
 
             // Guardar cambios en base de datos JSON
-            saveMaterialsToJSON();
+            const saved = saveMaterialsToJSON();
 
             loadMaterialsList();
             loadRapidMaterials();
             loadMaterials(); // Actualizar select principal de cotización
             clearMaterialForm();
 
-            showToast(`✅ Material "${materialData.name}" actualizado`, 'success');
+            if (saved) {
+              showToast(`🔄 ¡MATERIAL ACTUALIZADO! "${materialData.name}" modificado correctamente`, 'success', 4000);
+              
+              // Efecto visual en el botón
+              const submitBtn = document.querySelector('#materialForm button[type="submit"]');
+              const originalText = submitBtn.innerHTML;
+              submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>¡Actualizado!';
+              submitBtn.classList.add('bg-blue-500');
+              
+              // Mostrar efecto visual en la lista
+              setTimeout(() => {
+                showToast(`📋 Cambios aplicados en todas las pestañas`, 'info', 2000);
+                submitBtn.innerHTML = originalText;
+                submitBtn.classList.remove('bg-blue-500');
+                
+                const materialRow = document.querySelector(`[data-material-id="${editingMaterialId}"]`);
+                if (materialRow) {
+                  materialRow.style.backgroundColor = '#DBEAFE';
+                  setTimeout(() => {
+                    materialRow.style.backgroundColor = '';
+                  }, 2000);
+                }
+              }, 1500);
+            } else {
+              showToast(`❌ ERROR: No se pudo actualizar "${materialData.name}"`, 'error', 5000);
+            }
           }
         } else {
-          // Agregar nuevo material
+          // Agregar nuevo material (sin estado de guardando duplicado)
           addMaterial(materialData);
           clearMaterialForm();
         }
