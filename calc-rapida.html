@@ -260,17 +260,22 @@
       if (materialId && width > 0 && height > 0) {
         const material = materials.find(m => m.id == materialId);
         if (material) {
-          // Calcular metros usados
-          const metersUsed = Math.max(height / 100, material.minOrder || 0.5);
-          
-          // Calcular EXACTAMENTE el costo tal como lo compraste
-          const costoRealPorMetro = material.cost / material.length;
-          const costoTotalReal = costoRealPorMetro * metersUsed;
-          
-          // Mostrar resultados - COSTO REAL TAL COMO LO COMPRASTE
+          // Lógica de cálculo corregida
+          const materialWidthM = material.width / 100;
+          const materialAreaM2 = materialWidthM * material.length;
+          const costPerM2 = materialAreaM2 > 0 ? material.cost / materialAreaM2 : 0;
+
+          const pieceWidthM = width / 100;
+          const pieceHeightM = height / 100;
+          const pieceAreaM2 = pieceWidthM * pieceHeightM;
+
+          const costoTotalReal = pieceAreaM2 * costPerM2;
+          const metersUsed = Math.max(pieceHeightM, material.minOrder || 0);
+
+          // Mostrar resultados
           document.getElementById('rapidCost').textContent = `S/ ${costoTotalReal.toFixed(2)}`;
           document.getElementById('rapidMeters').textContent = `${metersUsed.toFixed(2)}m`;
-          document.getElementById('rapidArea').textContent = `${((width * height) / 10000).toFixed(2)} m²`;
+          document.getElementById('rapidArea').textContent = `${pieceAreaM2.toFixed(2)} m²`;
           document.getElementById('rapidSuggested').textContent = `S/ ${costoTotalReal.toFixed(2)}`;
 
           document.getElementById('rapidResult').style.display = 'block';
@@ -301,11 +306,18 @@
       }
 
       const material = materials.find(m => m.id == materialId);
-      const metersUsed = Math.max(height / 100, material.minOrder || 0.5);
       
-      // Calcular costo real tal como se compró
-      const costoRealPorMetro = material.cost / material.length;
-      const costoTotalReal = costoRealPorMetro * metersUsed;
+      // Lógica de cálculo corregida
+      const materialWidthM = material.width / 100;
+      const materialAreaM2 = materialWidthM * material.length;
+      const costPerM2 = materialAreaM2 > 0 ? material.cost / materialAreaM2 : 0;
+
+      const pieceWidthM = width / 100;
+      const pieceHeightM = height / 100;
+      const pieceAreaM2 = pieceWidthM * pieceHeightM;
+
+      const costoTotalReal = pieceAreaM2 * costPerM2;
+      const metersUsed = Math.max(pieceHeightM, material.minOrder || 0);
 
       const rapidItem = {
         id: rapidCounter++,
@@ -315,7 +327,7 @@
         height: height,
         cost: costoTotalReal,
         meters: metersUsed,
-        area: (width * height) / 10000
+        area: pieceAreaM2
       };
 
       rapidCalculations.push(rapidItem);
