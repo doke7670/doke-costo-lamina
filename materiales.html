@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Materiales - Viniles</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-negro text-white font-sans p-2 sm:p-4">
+  <div class="container mx-auto max-w-6xl bg-negro-claro rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-2xl">
+    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 text-center text-naranja">
+      <i class="fas fa-boxes text-naranja mr-2"></i>
+      <span class="hidden sm:inline">Gestión de Materiales</span>
+      <span class="sm:hidden">Materiales</span>
+    </h1>
+
+    <!-- Navegación entre Páginas -->
+    <nav class="mb-6">
+      <div class="flex bg-plomo-oscuro rounded-xl p-1 gap-1">
+        <a href="index.html" class="nav-link nav-inactive flex-1 py-2 px-3 rounded-lg text-sm font-medium transition text-center">
+          <i class="fas fa-file-invoice mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">Cotización</span>
+          <span class="sm:hidden">Cotizar</span>
+        </a>
+        <a href="calc-rapida.html" class="nav-link nav-inactive flex-1 py-2 px-3 rounded-lg text-sm font-medium transition text-center">
+          <i class="fas fa-calculator-alt mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">Calc Rápida</span>
+          <span class="sm:hidden">Calc</span>
+        </a>
+        <a href="materiales.html" class="nav-link nav-active flex-1 py-2 px-3 rounded-lg text-sm font-medium transition text-center">
+          <i class="fas fa-boxes mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">Materiales</span>
+          <span class="sm:hidden">Stock</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Formulario de Material -->
+      <div class="bg-plomo-oscuro rounded-xl p-4">
+        <h3 class="text-lg font-bold text-naranja mb-4">
+          <i class="fas fa-plus-circle mr-2"></i>Agregar/Editar Material
+        </h3>
+
+        <form id="materialForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold mb-2">
+              <i class="fas fa-tag text-naranja mr-1"></i>Nombre del Material:
+            </label>
+            <input type="text" id="materialName" placeholder="Ej: Vinil Cromado Premium"
+              class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">
+                <i class="fas fa-dollar-sign text-green-400 mr-1"></i>Costo Real (S/):
+              </label>
+              <input type="number" id="materialCost" placeholder="150.00" step="0.01"
+                class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2">
+                <i class="fas fa-percentage text-yellow-400 mr-1"></i>Ganancia (%):
+              </label>
+              <input type="number" id="materialMargin" placeholder="45" step="1"
+                class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">
+                <i class="fas fa-arrows-alt-h text-blue-400 mr-1"></i>Ancho (cm):
+              </label>
+              <input type="number" id="materialWidth" placeholder="150"
+                class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2">
+                <i class="fas fa-arrows-alt-v text-green-400 mr-1"></i>Largo (m):
+              </label>
+              <input type="number" id="materialLength" placeholder="50" step="0.1"
+                class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2">
+                <i class="fas fa-layer-group text-purple-400 mr-1"></i>Tipo:
+              </label>
+              <select id="materialType"
+                class="w-full rounded-xl px-4 py-2 bg-negro-claro text-white focus:outline-none focus:ring-2 ring-naranja">
+                <option value="standard">Estándar</option>
+                <option value="premium">Premium</option>
+                <option value="printed">Impreso</option>
+                <option value="reflective">Reflectivo</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Vista Previa del Cálculo -->
+          <div id="materialPreview" class="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-4 text-white"
+            style="display: none;">
+            <h4 class="font-bold mb-2">
+              <i class="fas fa-eye mr-2"></i>Vista Previa:
+            </h4>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div class="text-green-100">Costo por rollo:</div>
+                <div id="previewCost" class="font-bold">S/ 0.00</div>
+              </div>
+              <div>
+                <div class="text-green-100">Precio de venta:</div>
+                <div id="previewPrice" class="font-bold">S/ 0.00</div>
+              </div>
+              <div>
+                <div class="text-green-100">Ganancia:</div>
+                <div id="previewMargin" class="font-bold">S/ 0.00</div>
+              </div>
+              <div>
+                <div class="text-green-100">Por metro:</div>
+                <div id="previewPerMeter" class="font-bold">S/ 0.00/m</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button type="button" onclick="clearMaterialForm()"
+              class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-xl transition">
+              <i class="fas fa-broom mr-2"></i>Limpiar
+            </button>
+            <button type="submit"
+              class="flex-1 bg-naranja hover:bg-orange-600 text-white py-2 px-4 rounded-xl transition">
+              <i class="fas fa-save mr-2"></i>Guardar Material
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Lista de Materiales -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="bg-gradient-to-r from-plomo to-plomo-claro p-4">
+          <h4 class="text-white font-bold">
+            <i class="fas fa-list mr-2"></i>Materiales Registrados
+          </h4>
+          <p id="materialsCounter" class="text-gray-200 text-sm mt-1">
+            Cargando materiales...
+          </p>
+        </div>
+
+        <div class="max-h-96 overflow-y-auto">
+          <div id="materialsList" class="divide-y divide-gray-200">
+            <!-- Se llenará dinámicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor para Toast Notifications -->
+  <div id="toastContainer" class="fixed top-4 left-4 right-4 z-50 space-y-2 max-w-sm ml-auto"></div>
+
+  <script>
+    // Variables globales
+    let materials = [];
+    let editingMaterialId = null;
+
+    // Cargar materiales desde localStorage
+    function loadMaterials() {
+      try {
+        const saved = localStorage.getItem('materialsDatabase');
+        if (saved) {
+          const data = JSON.parse(saved);
+          materials = data.materials || [];
+        }
+      } catch (error) {
+        console.error('Error cargando materiales:', error);
+      }
+      
+      loadMaterialsList();
+    }
+
+    // Guardar materiales en localStorage
+    function saveMaterialsToJSON() {
+      try {
+        const materialsData = {
+          materials: materials,
+          lastUpdated: new Date().toISOString(),
+          totalMaterials: materials.length
+        };
+        
+        localStorage.setItem('materialsDatabase', JSON.stringify(materialsData));
+        console.log('✅ Materiales guardados en base de datos local:', materials.length);
+        return true;
+      } catch (error) {
+        console.error('❌ Error al guardar materiales:', error);
+        return false;
+      }
+    }
+
+    // Sistema de Toast Notifications
+    function showToast(message, type = 'info', duration = 3000) {
+      const toastContainer = document.getElementById('toastContainer');
+      const toastId = 'toast-' + Date.now();
+
+      const toast = document.createElement('div');
+      toast.id = toastId;
+      toast.className = `
+        transform transition-all duration-300 ease-in-out
+        bg-white rounded-lg shadow-lg border-l-4 p-4 min-w-80 max-w-md
+        ${type === 'success' ? 'border-green-500' : ''}
+        ${type === 'error' ? 'border-red-500' : ''}
+        ${type === 'warning' ? 'border-yellow-500' : ''}
+        ${type === 'info' ? 'border-blue-500' : ''}
+      `;
+
+      toast.innerHTML = `
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <i class="fas ${type === 'success' ? 'fa-check-circle text-green-500' : ''}
+                         ${type === 'error' ? 'fa-times-circle text-red-500' : ''}
+                         ${type === 'warning' ? 'fa-exclamation-triangle text-yellow-500' : ''}
+                         ${type === 'info' ? 'fa-info-circle text-blue-500' : ''}"></i>
+          </div>
+          <div class="ml-3 text-gray-800 font-medium">${message}</div>
+        </div>
+      `;
+
+      toastContainer.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+        toast.style.opacity = '1';
+      }, 100);
+
+      setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+          }
+        }, 300);
+      }, duration);
+    }
+
+    // Cargar lista de materiales
+    function loadMaterialsList() {
+      const container = document.getElementById('materialsList');
+      container.innerHTML = '';
+
+      materials.forEach(material => {
+        const realPrice = material.cost;
+        const salePrice = material.cost + (material.markup || 0);
+        const margin = material.markup ? ((material.markup / material.cost) * 100) : 0;
+
+        const materialCard = document.createElement('div');
+        materialCard.className = 'p-4 hover:bg-gray-50 transition';
+        materialCard.setAttribute('data-material-id', material.id);
+        materialCard.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <h5 class="font-semibold text-gray-900">${material.name}</h5>
+              <div class="text-sm text-gray-600 mt-1">
+                <span class="inline-block mr-4">📏 ${material.width}×${material.length}m</span>
+                <span class="inline-block mr-4">💰 Costo: S/ ${realPrice.toFixed(2)}</span>
+                <span class="inline-block">📈 Ganancia: ${margin.toFixed(1)}%</span>
+              </div>
+            </div>
+            <div class="flex gap-2 ml-4">
+              <button onclick="editMaterial(${material.id})" 
+                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition">
+                <i class="fas fa-edit mr-1"></i>Editar
+              </button>
+              <button onclick="deleteMaterial(${material.id})" 
+                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition">
+                <i class="fas fa-trash mr-1"></i>Eliminar
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(materialCard);
+      });
+
+      // Mostrar contador de materiales
+      const totalMaterials = materials.length;
+      const counterElement = document.getElementById('materialsCounter');
+      if (counterElement) {
+        counterElement.textContent = `${totalMaterials} materiales registrados`;
+      }
+    }
+
+    // Calcular vista previa del material
+    function calculateMaterialPreview() {
+      const cost = parseFloat(document.getElementById('materialCost').value) || 0;
+      const margin = parseFloat(document.getElementById('materialMargin').value) || 0;
+      const length = parseFloat(document.getElementById('materialLength').value) || 1;
+
+      if (cost > 0 && margin > 0) {
+        const salePrice = cost * (1 + margin / 100);
+        const marginAmount = salePrice - cost;
+        const pricePerMeter = salePrice / length;
+
+        document.getElementById('previewCost').textContent = `S/ ${cost.toFixed(2)}`;
+        document.getElementById('previewPrice').textContent = `S/ ${salePrice.toFixed(2)}`;
+        document.getElementById('previewMargin').textContent = `S/ ${marginAmount.toFixed(2)}`;
+        document.getElementById('previewPerMeter').textContent = `S/ ${pricePerMeter.toFixed(2)}/m`;
+
+        document.getElementById('materialPreview').style.display = 'block';
+      } else {
+        document.getElementById('materialPreview').style.display = 'none';
+      }
+    }
+
+    // Agregar nuevo material
+    function addMaterial(materialData) {
+      const newId = Math.max(...materials.map(m => m.id), 0) + 1;
+      const newMaterial = {
+        id: newId,
+        name: materialData.name,
+        cost: materialData.cost,
+        markup: materialData.cost * (materialData.margin / 100),
+        width: materialData.width,
+        length: materialData.length,
+        discountCm: 9,
+        type: materialData.type,
+        minOrder: 0.5,
+        brand: 'Personalizado'
+      };
+
+      materials.push(newMaterial);
+      
+      // Guardar en base de datos JSON
+      const saved = saveMaterialsToJSON();
+      
+      loadMaterialsList();
+
+      if (saved) {
+        showToast(`🎉 ¡MATERIAL GUARDADO! "${materialData.name}" agregado correctamente`, 'success', 4000);
+        console.log('💾 Material guardado en base de datos:', newMaterial.name);
+        
+        // Efecto visual en el botón
+        const submitBtn = document.querySelector('#materialForm button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>¡Guardado!';
+        submitBtn.classList.add('bg-green-500');
+        
+        setTimeout(() => {
+          showToast(`📋 Material disponible en todas las páginas`, 'info', 2000);
+          submitBtn.innerHTML = originalText;
+          submitBtn.classList.remove('bg-green-500');
+        }, 2000);
+      } else {
+        showToast(`❌ ERROR: No se pudo guardar "${materialData.name}"`, 'error', 5000);
+      }
+    }
+
+    // Editar material existente
+    function editMaterial(materialId) {
+      const material = materials.find(m => m.id === materialId);
+      if (material) {
+        editingMaterialId = materialId;
+
+        // Cargar datos en formulario
+        document.getElementById('materialName').value = material.name;
+        document.getElementById('materialCost').value = material.cost;
+        document.getElementById('materialWidth').value = material.width;
+        document.getElementById('materialLength').value = material.length;
+        document.getElementById('materialType').value = material.type || 'standard';
+
+        // Calcular margen actual
+        const currentMargin = material.markup ? (material.markup / material.cost * 100) : 0;
+        document.getElementById('materialMargin').value = currentMargin.toFixed(0);
+
+        // Cambiar texto del botón
+        const submitBtn = document.querySelector('#materialForm button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i>Actualizar Material';
+
+        showToast(`📝 Material "${material.name}" cargado para edición`, 'info');
+        
+        // Calcular vista previa
+        calculateMaterialPreview();
+      }
+    }
+
+    // Eliminar material
+    function deleteMaterial(materialId) {
+      const material = materials.find(m => m.id === materialId);
+      if (material && confirm(`¿Estás seguro de eliminar "${material.name}"?\n\nEsta acción no se puede deshacer.`)) {
+        
+        showToast(`🔄 Eliminando "${material.name}"...`, 'info', 1500);
+        
+        setTimeout(() => {
+          const index = materials.findIndex(m => m.id === materialId);
+          materials.splice(index, 1);
+
+          const saved = saveMaterialsToJSON();
+          loadMaterialsList();
+
+          if (saved) {
+            showToast(`🗑️ Material "${material.name}" eliminado exitosamente`, 'success', 3000);
+            
+            setTimeout(() => {
+              showToast(`🔄 Removido de todas las páginas`, 'info', 2000);
+            }, 1000);
+          } else {
+            showToast(`❌ Error al eliminar "${material.name}"`, 'error');
+          }
+        }, 800);
+      }
+    }
+
+    // Limpiar formulario de material
+    function clearMaterialForm() {
+      document.getElementById('materialForm').reset();
+      document.getElementById('materialPreview').style.display = 'none';
+      editingMaterialId = null;
+
+      // Restaurar texto del botón
+      const submitBtn = document.querySelector('#materialForm button[type="submit"]');
+      submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i>Guardar Material';
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      loadMaterials();
+
+      // Event listeners para vista previa
+      ['materialCost', 'materialMargin', 'materialLength'].forEach(id => {
+        document.getElementById(id).addEventListener('input', calculateMaterialPreview);
+      });
+
+      // Formulario de material
+      document.getElementById('materialForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const materialData = {
+          name: document.getElementById('materialName').value.trim(),
+          cost: parseFloat(document.getElementById('materialCost').value),
+          margin: parseFloat(document.getElementById('materialMargin').value),
+          width: parseInt(document.getElementById('materialWidth').value),
+          length: parseFloat(document.getElementById('materialLength').value),
+          type: document.getElementById('materialType').value
+        };
+
+        // Validaciones
+        if (!materialData.name) {
+          showToast('❌ Ingresa un nombre para el material', 'error');
+          return;
+        }
+
+        if (materialData.cost <= 0) {
+          showToast('❌ El costo debe ser mayor a 0', 'error');
+          return;
+        }
+
+        if (materialData.margin <= 0) {
+          showToast('❌ La ganancia debe ser mayor a 0', 'error');
+          return;
+        }
+
+        if (editingMaterialId) {
+          // Actualizar material existente
+          const material = materials.find(m => m.id === editingMaterialId);
+          if (material) {
+            material.name = materialData.name;
+            material.cost = materialData.cost;
+            material.markup = materialData.cost * (materialData.margin / 100);
+            material.width = materialData.width;
+            material.length = materialData.length;
+            material.type = materialData.type;
+
+            const saved = saveMaterialsToJSON();
+            loadMaterialsList();
+            clearMaterialForm();
+
+            if (saved) {
+              showToast(`🔄 ¡MATERIAL ACTUALIZADO! "${materialData.name}" modificado correctamente`, 'success', 4000);
+              
+              const submitBtn = document.querySelector('#materialForm button[type="submit"]');
+              const originalText = submitBtn.innerHTML;
+              submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>¡Actualizado!';
+              submitBtn.classList.add('bg-blue-500');
+              
+              setTimeout(() => {
+                showToast(`📋 Cambios aplicados en todas las páginas`, 'info', 2000);
+                submitBtn.innerHTML = originalText;
+                submitBtn.classList.remove('bg-blue-500');
+                
+                const materialRow = document.querySelector(`[data-material-id="${editingMaterialId}"]`);
+                if (materialRow) {
+                  materialRow.style.backgroundColor = '#DBEAFE';
+                  setTimeout(() => {
+                    materialRow.style.backgroundColor = '';
+                  }, 2000);
+                }
+              }, 1500);
+            } else {
+              showToast(`❌ ERROR: No se pudo actualizar "${materialData.name}"`, 'error', 5000);
+            }
+          }
+        } else {
+          // Agregar nuevo material
+          addMaterial(materialData);
+          clearMaterialForm();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
